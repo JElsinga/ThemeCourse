@@ -1,12 +1,22 @@
 package usb14.themeCourse.ee.framework;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class CostFunction {
 
+	private Map<Double, Double> costByDemandMap;
+	
 	/**
 	 * Creates a new CostFunction.
 	 */
-	public CostFunction() {
+	public CostFunction(Map<Double, Double> costByDemandMap) {
+		this.costByDemandMap = costByDemandMap;
 	}
+	
+	
+	// Queries
+	
 	
 	/**
 	 * Gets the cost associated with a given demand
@@ -37,5 +47,22 @@ public class CostFunction {
 	public CostFunction add(CostFunction cf){
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	
+	// Commands
+	
+	/**
+	 * Updates the cost for a given demand.
+	 * @param cost		The new cost associated by the given demand 
+	 * @param demand	The demand
+	 * @throws 	IllegalArgumentException when the given demand does not exist
+	 * 			in this cost function.
+	 */
+	protected void updateCostForDemand(double cost, double demand){
+		if (costByDemandMap.containsKey(demand))
+			costByDemandMap.put(cost, demand);
+		else
+			throw new IllegalArgumentException("The given demand does not exist in the cost function.");
 	}
 }
