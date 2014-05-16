@@ -1,6 +1,6 @@
 package usb14.themeCourse.ee.framework;
 
-public class Controller {
+public class Controller extends Thread{
 
 	private static Controller instance;
 	private Controllable controllable;
@@ -29,4 +29,12 @@ public class Controller {
 	public static Controller getInstance() {
 		return instance;
 	}
+	
+	// Commands
+	
+	public void run() {
+		
+	}
+	
+	
 }
