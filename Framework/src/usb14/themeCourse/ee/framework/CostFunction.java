@@ -1,6 +1,5 @@
 package usb14.themeCourse.ee.framework;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class CostFunction {
