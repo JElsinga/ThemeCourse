@@ -1,6 +1,5 @@
 package usb14.themeCourse.ee.framework;
 
-import java.util.Map;
 import java.util.SortedMap;
 
 public class CostFunction {
@@ -31,7 +30,8 @@ public class CostFunction {
 			double previous = 0;
 			for(double dem:costByDemandMap.keySet()){
 				if(dem > demand){
-					result = previous;
+					result = costByDemandMap.get(previous);
+					break;
 				}else{
 					previous = dem;
 				}
@@ -47,16 +47,16 @@ public class CostFunction {
 	 * @return		The demand associated with the cost
 	 */
 	public double getDemandByCost(double cost) {
-		return 0.0;
-		
-		/**double previous = 0;
+		double result = 0;
+		double previous = 0;
 		for(double d:costByDemandMap.keySet()){
-			if(d > demand){
+			if(costByDemandMap.get(d) >= cost){
 				result = previous;
 			}else{
 				previous = d;
 			}
-		}**/
+		}
+		return result;
 	}
 	
 	/**
