@@ -16,9 +16,9 @@ public class Network implements Controllable {
 
 	@Override
 	public CostFunction getCostFunction() {
-		CostFunction result = new CostFunction();
-		for(Controllable controllable: children){
-			result.add(controllable.getCostFunction());
+		CostFunction result = children.get(0).getCostFunction();
+		for(int i = 1; i < children.size(); i++){
+			result = result.add(children.get(i).getCostFunction());
 		}
 		return result;
 	}
