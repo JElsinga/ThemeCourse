@@ -4,7 +4,10 @@ public abstract class Appliance implements Controllable {
 	private final String name;
 	private CostFunction costFunction;
 	
-///// constructor
+	/**
+	 * Dit is een test
+	 * @param name
+	 */
 	public Appliance(String name) {
 		this.name = name;
 	}
