@@ -1,8 +1,11 @@
 package usb14.themeCourse.ee.framework;
 
-public abstract class Appliance implements Controllable {
+import java.util.Observable;
+
+public abstract class Appliance extends Observable implements Controllable {
 	private final String name;
 	private CostFunction costFunction;
+	private double currentPrice;
 	
 	/**
 	 * Constructor of the abstract class Appliance
@@ -13,6 +16,10 @@ public abstract class Appliance implements Controllable {
 	public Appliance(String name) {
 		this.name = name;
 	}
+	
+	
+	// Queries
+	
 	
 	/**
 	 * Function the get the name the appliance
@@ -27,13 +34,28 @@ public abstract class Appliance implements Controllable {
 		return this.costFunction;
 	}
 	
+	@Override
+	public double getCurrentUsage(){
+		return this.costFunction.getDemandByCost(currentPrice);
+	}
+	
+	// Commands
+	
+	
 	/**
 	 * setCostFunction sets the costFunction of the appliance
 	 * @param costFunction - The cost function for this appliance in its current state
 	 * @requires costFunction != null
 	 * @ensures this.costFunction = costFunction
 	 */
-	private void setCostFunction(CostFunction costFunction){
+	protected void setCostFunction(CostFunction costFunction){
 		this.costFunction = costFunction;
+		notifyObservers();
+	}
+	
+	@Override
+	public void updateStatus(double price){
+		this.currentPrice = price;
+		notifyObservers();
 	}
 }

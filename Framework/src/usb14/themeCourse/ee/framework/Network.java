@@ -1,8 +1,9 @@
 package usb14.themeCourse.ee.framework;
 
 import java.util.List;
+import java.util.Observable;
 
-public class Network implements Controllable {
+public class Network extends Observable implements Controllable {
 
 	/**
 	 * List of children for which this network is a direct parent.
@@ -13,27 +14,68 @@ public class Network implements Controllable {
 	 * Constructor
 	 */
 	public Network() {}
+	
+	
+	// Queries
+	
 
+	/**
+	 * Gets the cost function of this network, based on the sum of the
+	 * cost functions of its children.
+	 * @return	null if this network doesn't have any children, a CostFunction
+	 * 			if it does.
+	 */
 	@Override
 	public CostFunction getCostFunction() {
-		CostFunction result = children.get(0).getCostFunction();
-		for(int i = 1; i < children.size(); i++){
-			result = result.add(children.get(i).getCostFunction());
+		CostFunction result = null;
+		if (!children.isEmpty()){
+			result = children.get(0).getCostFunction();
+			for(int i = 1; i < children.size(); i++){
+				result = result.add(children.get(i).getCostFunction());
+			}
 		}
 		return result;
 	}
 	
+	/**
+	 * Gets the amount of energy the network is currently using.
+	 * @return	the sum of the usages of its children.
+	 */
 	@Override
 	public double getCurrentUsage() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public void updateStatus() {
+		double result = 0;
 		for(Controllable controllable: children){
-			controllable.updateStatus();
+			result += controllable.getCurrentUsage();
 		}
+		return result;
+	}
+	
+	/**
+	 * Returns a new list of the Controllables in this network.
+	 * @return
+	 */
+	public Controllable[] getControllables(){
+		Controllable[] result = new Controllable[children.size()];
+		for(int i = 0; i < result.length; i++){
+			result[i] = children.get(i);
+		}
+		return result;
+	}
+	
+	
+	// Commands
+
+	
+	/**
+	 * Propagates the price change to all its children.
+	 * @param price	The new price for energy.
+	 */
+	@Override
+	public void updateStatus(double price) {
+		for(Controllable controllable: children){
+			controllable.updateStatus(price);
+		}
+		notifyObservers();
 	}
 	
 	/**
@@ -46,6 +88,7 @@ public class Network implements Controllable {
 	 */
 	public void addControllable(Controllable controllable) {
 		children.add(controllable);
+		notifyObservers();
 	}
 
 	/**
@@ -55,9 +98,8 @@ public class Network implements Controllable {
 	 * @ensures !this.children.contains(controllable)
 	 */
 	public void removeControllable(Controllable controllable) {
-		if(children.contains(controllable)){
-			children.remove(children.indexOf(controllable));
-		}
+		children.remove(controllable);
+		notifyObservers();
 	}
 
 }
