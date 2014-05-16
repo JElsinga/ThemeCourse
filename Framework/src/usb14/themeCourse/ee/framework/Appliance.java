@@ -5,14 +5,19 @@ public abstract class Appliance implements Controllable {
 	private CostFunction costFunction;
 	
 	/**
-	 * Dit is een test
-	 * @param name
+	 * Constructor of the abstract class Appliance
+	 * @param name - Name of the appliance
+	 * @requires name != null
+	 * @ensures this.name = name
 	 */
 	public Appliance(String name) {
 		this.name = name;
 	}
 	
-///// queries
+	/**
+	 * Function the get the name the appliance
+	 * @return this.name
+	 */
 	public String getName(){
 		return this.name;
 	}
@@ -22,9 +27,13 @@ public abstract class Appliance implements Controllable {
 		return this.costFunction;
 	}
 	
+	/**
+	 * setCostFunction sets the costFunction of the appliance
+	 * @param costFunction - The cost function for this appliance in its current state
+	 * @requires costFunction != null
+	 * @ensures this.costFunction = costFunction
+	 */
 	private void setCostFunction(CostFunction costFunction){
 		this.costFunction = costFunction;
 	}
-	
-
 }
