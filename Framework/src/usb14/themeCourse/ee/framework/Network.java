@@ -20,6 +20,12 @@ public class Network implements Controllable {
 		}
 		return result;
 	}
+	
+	@Override
+	public double getCurrentUsage() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
 ///// commands
 	@Override
@@ -28,7 +34,6 @@ public class Network implements Controllable {
 			controllable.updateStatus();
 		}
 	}
-
 	
 	public void addControllable(Controllable controllable) {
 		children.add(controllable);
@@ -40,10 +45,6 @@ public class Network implements Controllable {
 		}
 	}
 
-	@Override
-	public double getCurrentUsage() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+
 
 }

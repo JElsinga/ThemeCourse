@@ -5,5 +5,4 @@ public class Supply {
 	public Supply() {
 		
 	}
-
 }
