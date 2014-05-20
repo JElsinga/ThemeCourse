@@ -7,6 +7,10 @@ public abstract class Appliance extends Observable implements Controllable {
 	private CostFunction costFunction;
 	private double currentPrice;
 	
+	
+	// Constructor
+	
+	
 	/**
 	 * Constructor of the abstract class Appliance
 	 * @param name - Name of the appliance

@@ -6,7 +6,9 @@ public class CostFunction {
 
 	private SortedMap<Double, Double> costByDemandMap;
 	
+	
 	// Constructor
+	
 	
 	/**
 	 * Creates a new CostFunction.

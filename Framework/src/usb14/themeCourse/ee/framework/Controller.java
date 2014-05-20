@@ -5,7 +5,10 @@ public class Controller extends Thread{
 	private static Controller instance;
 	private Controllable controllable;
 	
-	// Singleton
+	
+	// Constructor - Singleton
+	
+	
 	private Controller(Controllable controllable) {
 		this.controllable = controllable;
 	}

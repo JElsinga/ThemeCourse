@@ -10,6 +10,10 @@ public class Network extends Observable implements Controllable {
 	 */
 	private List<Controllable> children;
 
+	
+	// Constructor
+	
+	
 	/**
 	 * Constructor
 	 */

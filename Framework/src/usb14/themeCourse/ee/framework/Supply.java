@@ -7,8 +7,27 @@ public class Supply extends Observable implements Runnable{
 	//Cost function of the Supply
 	private CostFunction costFunction;
 	
+	
+	// Constructor
+	
+	
 	public Supply() {}
+	
+	
+	// Queries
 
+	/**
+	 * getter of variable costFunction
+	 * @return this.costFuncion
+	 */
+	public CostFunction getCostFunction(){
+		return this.costFunction;
+	}
+	
+	
+	// Commands
+	
+	
 	/**
 	 * Setter of variable costFuncion
 	 * @param costFunction
@@ -17,13 +36,6 @@ public class Supply extends Observable implements Runnable{
 		this.costFunction = costFunction;
 	}
 	
-	/**
-	 * getter of variable costFunction
-	 * @return this.costFuncion
-	 */
-	public CostFunction getCostFunction(){
-		return this.costFunction;
-	}
 	
 	@Override
 	public void run() {
