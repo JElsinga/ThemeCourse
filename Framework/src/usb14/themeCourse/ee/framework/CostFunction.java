@@ -1,9 +1,15 @@
 package usb14.themeCourse.ee.framework;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.SortedMap;
+
+import javax.swing.RowFilter.Entry;
 
 public class CostFunction {
 
+	//SortedMap<DEMAND,COST>
 	private SortedMap<Double, Double> costByDemandMap;
 	
 	
@@ -51,16 +57,36 @@ public class CostFunction {
 	 * @return		The demand associated with the cost
 	 */
 	public double getDemandByCost(double cost) {
+
+		double viable = 0;
+		Set<Double> set = costByDemandMap.keySet();
+		//System.out.println(set);
+		for(double d:set){
+			//System.out.print("Checking: "+costByDemandMap.get(d)+" ");
+			if(costByDemandMap.get(d) >= cost){
+				viable = d;
+				//System.out.println("Found viable: "+d);
+			}else{
+				//System.out.println("No viable found: "+viable);
+			}
+		}
+		return viable;
+		//return 0.0;
+		/**
 		double result = 0;
 		double previous = 0;
 		for(double d:costByDemandMap.keySet()){
-			if(costByDemandMap.get(d) >= cost){
+			if(costByDemandMap.get(d) < cost){
 				result = previous;
+				System.out.println("True Result: "+result+", previous: "+previous);
+				
 			}else{
 				previous = d;
+				System.out.println("False Result: "+result+", previous: "+previous);
 			}
 		}
 		return result;
+		*/
 	}
 	
 	/**
@@ -86,8 +112,17 @@ public class CostFunction {
 	 */
 	protected void updateCostForDemand(double cost, double demand){
 		if (costByDemandMap.containsKey(demand))
-			costByDemandMap.put(cost, demand);
+			costByDemandMap.put(demand, cost);
 		else
 			throw new IllegalArgumentException("The given demand does not exist in the cost function.");
+	}
+	
+	public String toString(){
+		String result = "";
+		for(java.util.Map.Entry<Double, Double> entry :costByDemandMap.entrySet()){
+			
+			result = result + "\t Entry: "+ entry.toString();
+		}
+		return result;
 	}
 }

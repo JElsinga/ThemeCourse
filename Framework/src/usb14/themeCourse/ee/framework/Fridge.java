@@ -37,7 +37,12 @@ public class Fridge extends Appliance{
 	
 	@Override
 	public double getCurrentUsage() {
-		return super.getCostFunction().getDemandByCost(currentPrice);
+		double result = super.getCostFunction().getDemandByCost(currentPrice);
+		//System.out.println("Current CostFunction Fridge: "+super.getCostFunction());
+		//System.out.println("Current Price Fridge = "+currentPrice);
+		//System.out.println("Current Usage Fridge = "+result);
+		return result;
+		
 	}
 	
 	public int getState() {
@@ -58,7 +63,7 @@ public class Fridge extends Appliance{
 		}else if(temp < 2.5){ 
 			cost = 0;
 		}else{
-			cost = maxCost/(8-temp);
+			cost = Math.round(maxCost/(8-temp));
 		}
 		CostFunction result = super.getCostFunction();
 		result.updateCostForDemand(cost, usage);

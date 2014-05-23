@@ -41,7 +41,7 @@ public class Controller extends Thread{
 	public void run() {
 		while(true){
 			try {
-				sleep(100);
+				sleep(1000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -58,13 +58,7 @@ public class Controller extends Thread{
 	public static void main(String args[]){
 		Fridge koelkast = new Fridge("koelkast1");
 		Controller controller = new Controller(koelkast);
-		try {
-			PrintWriter writer = new PrintWriter("output.txt");
-			controller.start();
-		} catch (FileNotFoundException e) {
-			System.out.println("Aardbei");
-			e.printStackTrace();
-		}
+		controller.start();
 	}
 	
 	
