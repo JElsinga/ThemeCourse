@@ -26,7 +26,7 @@ public class Fridge extends Appliance{
 		this.currentPrice = 0;
 		
 		SortedMap<Double, Double> function = new TreeMap<Double, Double>();
-		function.put(0.0, usage);	
+		function.put(usage, 0.0);	
 		CostFunction result = new CostFunction(function);
 		super.setCostFunction(result);
 
@@ -38,6 +38,14 @@ public class Fridge extends Appliance{
 	@Override
 	public double getCurrentUsage() {
 		return super.getCostFunction().getDemandByCost(currentPrice);
+	}
+	
+	public int getState() {
+		return state;
+	}
+	
+	public double getTemp(){
+		return temp;
 	}
 	
 	

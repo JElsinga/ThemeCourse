@@ -1,5 +1,8 @@
 package usb14.themeCourse.ee.framework;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+
 public class Controller extends Thread{
 
 	private static Controller instance;
@@ -36,7 +39,32 @@ public class Controller extends Thread{
 	// Commands
 	
 	public void run() {
-		controllable.updatePrice(1000.0);
+		while(true){
+			try {
+				sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			controllable.updateState(10);
+			controllable.updatePrice(1000.0);
+			System.out.println("current usage: " + controllable.getCurrentUsage() + "\t " + ((Fridge)controllable).getState() + "\t temperatuur: " + ((Fridge)controllable).getTemp());
+		}
+	}
+	
+	
+	
+	
+	public static void main(String args[]){
+		Fridge koelkast = new Fridge("koelkast1");
+		Controller controller = new Controller(koelkast);
+		try {
+			PrintWriter writer = new PrintWriter("output.txt");
+			controller.start();
+		} catch (FileNotFoundException e) {
+			System.out.println("Aardbei");
+			e.printStackTrace();
+		}
 	}
 	
 	
