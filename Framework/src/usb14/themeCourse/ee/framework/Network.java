@@ -75,12 +75,25 @@ public class Network extends Observable implements Controllable {
 	 * @param price	The new price for energy.
 	 */
 	@Override
-	public void updateStatus(double price) {
+	public void updatePrice(double price) {
 		for(Controllable controllable: children){
-			controllable.updateStatus(price);
+			controllable.updatePrice(price);
 		}
 		notifyObservers();
 	}
+	
+	/**
+	 * Propagates the price change to all its children.
+	 * @param t	The current time.
+	 */
+	@Override
+	public void updateState(int t) {
+		for(Controllable controllable: children){
+			controllable.updateState(t);
+		}
+		notifyObservers();		
+	}
+	
 	
 	/**
 	 * Adds a child controllable to this network (can be another network or appliance)
@@ -105,5 +118,8 @@ public class Network extends Observable implements Controllable {
 		children.remove(controllable);
 		notifyObservers();
 	}
+
+
+	
 
 }

@@ -5,7 +5,6 @@ import java.util.Observable;
 public abstract class Appliance extends Observable implements Controllable {
 	private final String name;
 	private CostFunction costFunction;
-	private double currentPrice;
 	
 	
 	// Constructor
@@ -38,11 +37,7 @@ public abstract class Appliance extends Observable implements Controllable {
 		return this.costFunction;
 	}
 	
-	@Override
-	public double getCurrentUsage(){
-		return this.costFunction.getDemandByCost(currentPrice);
-	}
-	
+		
 	// Commands
 	
 	
@@ -54,12 +49,6 @@ public abstract class Appliance extends Observable implements Controllable {
 	 */
 	protected void setCostFunction(CostFunction costFunction){
 		this.costFunction = costFunction;
-		notifyObservers();
 	}
-	
-	@Override
-	public void updateStatus(double price){
-		this.currentPrice = price;
-		notifyObservers();
-	}
+
 }

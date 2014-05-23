@@ -36,7 +36,7 @@ public class Controller extends Thread{
 	// Commands
 	
 	public void run() {
-		controllable.updateStatus(1000.0);
+		controllable.updatePrice(1000.0);
 	}
 	
 	

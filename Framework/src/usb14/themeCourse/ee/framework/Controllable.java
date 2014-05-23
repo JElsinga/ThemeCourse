@@ -4,7 +4,9 @@ public interface Controllable {
 
 	public CostFunction getCostFunction();
 	
-	public void updateStatus(double price);
+	public void updatePrice(double price);
+	
+	public void updateState(int t);
 	
 	public double getCurrentUsage();
 }
