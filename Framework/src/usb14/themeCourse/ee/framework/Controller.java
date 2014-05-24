@@ -2,6 +2,7 @@ package usb14.themeCourse.ee.framework;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 public class Controller extends Thread{
 
@@ -39,17 +40,36 @@ public class Controller extends Thread{
 	// Commands
 	
 	public void run() {
-		while(true){
-			try {
-				sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		int runTime = 50;
+		int interval = 10;
+		Double price = 1000.0; 
+		Double usage = 0.0; 
+		Double totalPrice = 0.0;
+		String output = "output.txt";
+		int timeCounter = 0;
+		PrintWriter writer;
+		try {
+			writer = new PrintWriter("output.txt");
+			Fridge fridge = ((Fridge)controllable);
+			writer.println("State update for controllable: "+fridge.getName());
+			writer.println("Time \t State \t Temp \t Usage");
+			for(int i=0;i<runTime;i++){
+				controllable.updatePrice(price);
+				writer.println(timeCounter+"\t\t "+fridge.getState()+"\t\t "+fridge.getTemp()+"\t"+fridge.getCurrentUsage());
+				
+				controllable.updateState(interval);
+				usage += controllable.getCurrentUsage();
+				if(controllable.getCurrentUsage()!=0) totalPrice += price;
+			timeCounter+=interval;
 			}
-			controllable.updateState(10);
-			controllable.updatePrice(1000.0);
-			System.out.println("current usage: " + controllable.getCurrentUsage() + "\t " + ((Fridge)controllable).getState() + "\t temperatuur: " + ((Fridge)controllable).getTemp());
+			writer.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
 		}
+		System.out.println("The total runtime was: "+runTime*60+" minutes with "+runTime+" intervals of "+interval+" minutes.");
+		System.out.println("\t\t The total usage was: "+usage+" kilowatts");
+		System.out.println("\t\t The total cost was:  "+totalPrice+" units");
+		System.out.println("The state transition data can be found in "+output);
 	}
 	
 	

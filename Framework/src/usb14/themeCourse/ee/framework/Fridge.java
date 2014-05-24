@@ -40,7 +40,7 @@ public class Fridge extends Appliance{
 		double result = super.getCostFunction().getDemandByCost(currentPrice);
 		//System.out.println("Current CostFunction Fridge: "+super.getCostFunction());
 		//System.out.println("Current Price Fridge = "+currentPrice);
-		//System.out.println("Current Usage Fridge = "+result);
+		//System.out.print("Current Usage Fridge = "+result+"\t");
 		return result;
 		
 	}
@@ -58,12 +58,13 @@ public class Fridge extends Appliance{
 	
 	public void setCostFunction(){
 		double cost = 1000;
-		if(temp>=7.5){
+		if(time > 0 && time < 20) cost = maxCost;
+		else if(temp>=7.5){
 			cost = maxCost;
 		}else if(temp < 2.5){ 
 			cost = 0;
 		}else{
-			cost = Math.round(maxCost/(8-temp));
+			cost = Math.round((maxCost+2000)/(8-temp));
 		}
 		CostFunction result = super.getCostFunction();
 		result.updateCostForDemand(cost, usage);
@@ -74,23 +75,26 @@ public class Fridge extends Appliance{
 	
 	@Override
 	public void updateState(int t){
+
+		//update costfunction
+		this.setCostFunction();
+		
+		//update temp and time
+		if(this.state == ON){
+			temp -= 0.05*t;
+			this.time += t;
+		} else {
+			temp += 0.025*t;
+			this.time = 0;
+		}
+		
 		//update state
-		if(getCurrentUsage() == 0){
+		Double cur = getCurrentUsage();
+		if(cur == 0){
 			this.state = OFF;
 		} else {
 			this.state = ON;
 		}
-		//update temp and time
-		if(this.state == ON){
-			temp -= 0.5*t;
-			this.time += t;
-		} else {
-			temp += 0.25*t;
-			this.time = 0;
-		}
-		
-		//update costfunction
-		this.setCostFunction();
 		
 	}
 	
