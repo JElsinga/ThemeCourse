@@ -62,7 +62,7 @@ public class Controller extends Thread{
 			controllable.updatePrice(price);
 			
 			try {
-				sleep(200);
+				sleep(50);
 			} catch (InterruptedException e) {}
 			
 			controllable.updateState();

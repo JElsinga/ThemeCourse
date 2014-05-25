@@ -1,5 +1,7 @@
 package usb14.themeCourse.ee.application;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -12,6 +14,7 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
+import usb14.themeCourse.ee.framework.Controllable;
 import usb14.themeCourse.ee.framework.Controller;
 import usb14.themeCourse.ee.framework.Fridge;
 import net.miginfocom.swing.MigLayout;
@@ -24,12 +27,17 @@ public class View extends JFrame implements Observer {
 	
 	private static final long serialVersionUID = 9125637833500321931L;
 	
-	Controller controller;
-	Fridge fridge;
-	XYSeries fridgeUsageSeries;
-	XYSeries fridgeTemperatureSeries;
+	private Controller controller;
+	private Fridge fridge;
+	private XYSeries fridgeUsageSeries;
+	private XYSeries fridgeTemperatureSeries;
+	
+	// Holds the usage of the last interval for every Controllable in order to make a better usage plot
+	private Map<Controllable, Double> lastUsageByControllable;
 
 	public View(){
+		lastUsageByControllable = new HashMap<Controllable, Double>();
+		
 		fridge = new Fridge("Super Fridge X9000");
 		fridge.addObserver(this);
 		
@@ -43,7 +51,8 @@ public class View extends JFrame implements Observer {
 	
 	private void initComponents(){
 		setTitle("Energy Efficiency Simulation");
-		setLayout(new MigLayout("wrap 1"));
+		setLayout(new MigLayout("wrap 1", "[grow]", ""));
+		
 		
 		// Fridge Usage Plot
 		fridgeUsageSeries = new XYSeries("Fridge Usage");
@@ -52,6 +61,7 @@ public class View extends JFrame implements Observer {
 				"Fridge Usage", "Time", "Usage", fridgeUsageData, PlotOrientation.VERTICAL,
 				false, false, false);
 		ChartPanel fridgeUsageChartPanel = new ChartPanel(fridgeUsageChart);
+		fridgeUsageChartPanel.setMaximumDrawWidth(10000);
 		
 		// Fridge Temperature Plot
 		fridgeTemperatureSeries = new XYSeries("Fridge Temperature");
@@ -60,9 +70,10 @@ public class View extends JFrame implements Observer {
 				"Fridge Temperature", "Time", "Temperature", fridgeTemperatureData, PlotOrientation.VERTICAL,
 				false, false, false);
 		ChartPanel fridgeTemperatureChartPanel = new ChartPanel(fridgeTemperatureChart);
+		fridgeTemperatureChartPanel.setMaximumDrawWidth(10000);
 		
-		this.add(fridgeUsageChartPanel);
-		this.add(fridgeTemperatureChartPanel);
+		this.add(fridgeUsageChartPanel, "growx");
+		this.add(fridgeTemperatureChartPanel, "growx");
 		
 		this.setSize(500, 500);
 		setVisible(true);
@@ -72,10 +83,11 @@ public class View extends JFrame implements Observer {
 	public void update(Observable observable, Object object) {
 		int time = controller.getTime();
 		if (observable == fridge) {
-			if (time > 0) {
-				fridgeUsageSeries.add(time - controller.getIntervalDuration(), fridge.getCurrentUsage());
-			}
+			if (lastUsageByControllable.containsKey(fridge))
+				fridgeUsageSeries.add(time, lastUsageByControllable.get(fridge));
 			fridgeUsageSeries.add(time, fridge.getCurrentUsage());
+			lastUsageByControllable.put(fridge, fridge.getCurrentUsage());
+			
 			fridgeTemperatureSeries.add(time, fridge.getTemp());
 		}
 	}
