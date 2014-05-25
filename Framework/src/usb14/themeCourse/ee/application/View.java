@@ -12,49 +12,68 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
+import usb14.themeCourse.ee.framework.Controller;
+import usb14.themeCourse.ee.framework.Fridge;
 import net.miginfocom.swing.MigLayout;
 
+/**
+ * Class that implements both a View and Controller that observes changes in 
+ * Controllables and shows them in plots.
+ */
 public class View extends JFrame implements Observer {
 	
 	private static final long serialVersionUID = 9125637833500321931L;
 	
-	XYSeries testXYSeries;
+	Controller controller;
+	Fridge fridge;
+	XYSeries fridgeUsageSeries;
+	XYSeries fridgeTemperatureSeries;
 
 	public View(){
+		fridge = new Fridge("Super Fridge X9000");
+		fridge.addObserver(this);
+		
+		Controller.initialise(fridge, 10);
+		controller = Controller.getInstance();
+		
 		initComponents();
+		
+		controller.start();
 	}
 	
 	private void initComponents(){
 		setTitle("Energy Efficiency Simulation");
 		setLayout(new MigLayout("wrap 1"));
 		
-		// Test Plot
-		testXYSeries = new XYSeries("Test Data");
-		XYSeriesCollection testData = new XYSeriesCollection(testXYSeries);
-		JFreeChart testChart = ChartFactory.createXYLineChart(
-				"Test", "Time", "Usage", testData, PlotOrientation.VERTICAL,
+		// Fridge Usage Plot
+		fridgeUsageSeries = new XYSeries("Fridge Usage");
+		XYSeriesCollection fridgeUsageData = new XYSeriesCollection(fridgeUsageSeries);
+		JFreeChart fridgeUsageChart = ChartFactory.createXYLineChart(
+				"Fridge Usage", "Time", "Usage", fridgeUsageData, PlotOrientation.VERTICAL,
 				false, false, false);
-		ChartPanel testChartPanel = new ChartPanel(testChart);
+		ChartPanel fridgeUsageChartPanel = new ChartPanel(fridgeUsageChart);
 		
-		testXYSeries.add(0, 5);
-		testXYSeries.add(1, 5);
-		testXYSeries.add(1, 4);
-		testXYSeries.add(2, 4);
-		testXYSeries.add(2, 5);
-		testXYSeries.add(3, 5);
-		testXYSeries.add(3, 7);
-		testXYSeries.add(4, 7);
-		testXYSeries.add(4, 2);
-		testXYSeries.add(5, 2);
-		testXYSeries.add(5, 5);
-		this.add(testChartPanel);
+		// Fridge Temperature Plot
+		fridgeTemperatureSeries = new XYSeries("Fridge Temperature");
+		XYSeriesCollection fridgeTemperatureData = new XYSeriesCollection(fridgeTemperatureSeries);
+		JFreeChart fridgeTemperatureChart = ChartFactory.createXYLineChart(
+				"Fridge Temperature", "Time", "Temperature", fridgeTemperatureData, PlotOrientation.VERTICAL,
+				false, false, false);
+		ChartPanel fridgeTemperatureChartPanel = new ChartPanel(fridgeTemperatureChart);
+		
+		this.add(fridgeUsageChartPanel);
+		this.add(fridgeTemperatureChartPanel);
 		setVisible(true);
 	}
 
 	@Override
 	public void update(Observable observable, Object object) {
-		// TODO Auto-generated method stub
-		
+		int time = controller.getTime();
+		if (observable == fridge) {
+			fridgeUsageSeries.add(time, fridge.getCurrentUsage());
+			fridgeUsageSeries.add(time + controller.getIntervalDuration(), fridge.getCurrentUsage());
+			fridgeTemperatureSeries.add(time, fridge.getTemp());
+		}
 	}
 
 }

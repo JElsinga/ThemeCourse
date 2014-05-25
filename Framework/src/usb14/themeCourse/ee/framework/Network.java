@@ -87,9 +87,9 @@ public class Network extends Observable implements Controllable {
 	 * @param t	The current time.
 	 */
 	@Override
-	public void updateState(int t) {
+	public void updateState() {
 		for(Controllable controllable: children){
-			controllable.updateState(t);
+			controllable.updateState();
 		}
 		notifyObservers();		
 	}

@@ -4,11 +4,11 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class Fridge extends Appliance{
-	public static final int ON = 1;
-	public static final int OFF = 0;
+	public enum State {
+		ON, OFF
+	}
 	
-	
-	private int state;
+	private State state;
 	private double temp;
 	private int time;
 	private double currentPrice;
@@ -20,16 +20,14 @@ public class Fridge extends Appliance{
 	
 	public Fridge(String name) {
 		super(name);
-		this.state = OFF;
+		this.state = State.OFF;
 		this.temp = 2;
 		this.time = 0;
 		this.currentPrice = 0;
 		
 		SortedMap<Double, Double> function = new TreeMap<Double, Double>();
 		function.put(usage, 0.0);	
-		CostFunction result = new CostFunction(function);
-		super.setCostFunction(result);
-
+		super.setCostFunction(new CostFunction(function));
 	}
 	
 	
@@ -45,7 +43,7 @@ public class Fridge extends Appliance{
 		
 	}
 	
-	public int getState() {
+	public State getState() {
 		return state;
 	}
 	
@@ -56,31 +54,27 @@ public class Fridge extends Appliance{
 	
 	// Commands
 	
-	public void setCostFunction(){
+	private void updateCostFunction(){
 		double cost = 1000;
 		if(time > 0 && time < 20) cost = maxCost;
-		else if(temp>=7.5){
+		else if(temp >= 7.5){
 			cost = maxCost;
-		}else if(temp < 2.5){ 
+		} else if(temp < 2.5){ 
 			cost = 0;
-		}else{
+		} else{
 			cost = Math.round((maxCost+2000)/(8-temp));
 		}
-		CostFunction result = super.getCostFunction();
-		result.updateCostForDemand(cost, usage);
-		super.setCostFunction(result);
+		super.getCostFunction().updateCostForDemand(cost, usage);
 	}
 	
 	
 	
 	@Override
-	public void updateState(int t){
-
-		//update costfunction
-		this.setCostFunction();
+	public void updateState(){
+		int t = Controller.getInstance().getIntervalDuration();
 		
-		//update temp and time
-		if(this.state == ON){
+		// update temperature and time running
+		if(this.state == State.ON){
 			temp -= 0.05*t;
 			this.time += t;
 		} else {
@@ -88,19 +82,23 @@ public class Fridge extends Appliance{
 			this.time = 0;
 		}
 		
-		//update state
-		Double cur = getCurrentUsage();
-		if(cur == 0){
-			this.state = OFF;
-		} else {
-			this.state = ON;
-		}
-		
+		// update costfunction based on the new temperature and time running
+		this.updateCostFunction();		
 	}
 	
 	@Override
 	public void updatePrice(double price){
 		this.currentPrice = price;
+		
+		// update state based on the current price
+		double cur = getCurrentUsage();
+		if(cur == 0){
+			this.state = State.OFF;
+		} else {
+			this.state = State.ON;
+		}
+		setChanged();
+		notifyObservers();
 	}
 
 

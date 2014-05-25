@@ -42,7 +42,7 @@ public abstract class Appliance extends Observable implements Controllable {
 	
 	
 	/**
-	 * setCostFunction sets the costFunction of the appliance
+	 * Sets the costFunction of the appliance
 	 * @param costFunction - The cost function for this appliance in its current state
 	 * @requires costFunction != null
 	 * @ensures this.costFunction = costFunction

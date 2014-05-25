@@ -1,20 +1,18 @@
 package usb14.themeCourse.ee.framework;
 
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-
 public class Controller extends Thread{
 
 	private static Controller instance;
 	private Controllable controllable;
-	
+	private int time;
+	private int interval;
 	
 	// Constructor - Singleton
 	
 	
-	private Controller(Controllable controllable) {
+	private Controller(Controllable controllable, int interval) {
 		this.controllable = controllable;
+		this.interval = interval;
 	}
 	
 	/**
@@ -23,10 +21,12 @@ public class Controller extends Thread{
 	 * was already called once.
 	 * @param controllable	The Controllable that should be controlled by
 	 * 						this controller.
+	 * @param interval		How long the Controller should wait between
+	 * 						each update.
 	 */
-	public static void intialise(Controllable controllable){
+	public static void initialise(Controllable controllable, int interval){
 		if (instance == null)
-			instance = new Controller(controllable);
+			instance = new Controller(controllable, interval);
 	}
 	
 	/**
@@ -37,48 +37,33 @@ public class Controller extends Thread{
 		return instance;
 	}
 	
+	/**
+	 * Returns how much time passes during one interval.
+	 * @return an integer representing the time during one interval
+	 */
+	public int getIntervalDuration() {
+		return interval;
+	}
+	
+	/**
+	 * Returns the total ellapsed time.
+	 * @return an integer representing the total ellapsed time.
+	 */
+	public int getTime() {
+		return time;
+	}
+	
 	// Commands
 	
 	public void run() {
 		int runTime = 50;
-		int interval = 10;
-		Double price = 1000.0; 
-		Double usage = 0.0; 
-		Double totalPrice = 0.0;
-		String output = "output.txt";
-		int timeCounter = 0;
-		PrintWriter writer;
-		try {
-			writer = new PrintWriter("output.txt");
-			Fridge fridge = ((Fridge)controllable);
-			writer.println("State update for controllable: "+fridge.getName());
-			writer.println("Time \t State \t Temp \t Usage");
-			for(int i=0;i<runTime;i++){
-				controllable.updatePrice(price);
-				writer.println(timeCounter+"\t\t "+fridge.getState()+"\t\t "+fridge.getTemp()+"\t"+fridge.getCurrentUsage());
-				
-				controllable.updateState(interval);
-				usage += controllable.getCurrentUsage();
-				if(controllable.getCurrentUsage()!=0) totalPrice += price;
-			timeCounter+=interval;
-			}
-			writer.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+		Double price = 1000.0;
+		
+		for(int i=0; i < runTime; i++) {
+			controllable.updatePrice(price);
+			controllable.updateState();
+			this.time+=interval;
 		}
-		System.out.println("The total runtime was: "+runTime*60+" minutes with "+runTime+" intervals of "+interval+" minutes.");
-		System.out.println("\t\t The total usage was: "+usage+" kilowatts");
-		System.out.println("\t\t The total cost was:  "+totalPrice+" units");
-		System.out.println("The state transition data can be found in "+output);
-	}
-	
-	
-	
-	
-	public static void main(String args[]){
-		Fridge koelkast = new Fridge("koelkast1");
-		Controller controller = new Controller(koelkast);
-		controller.start();
 	}
 	
 	

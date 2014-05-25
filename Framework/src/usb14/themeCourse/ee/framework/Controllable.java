@@ -6,7 +6,7 @@ public interface Controllable {
 	
 	public void updatePrice(double price);
 	
-	public void updateState(int t);
+	public void updateState();
 	
 	public double getCurrentUsage();
 }
