@@ -63,6 +63,8 @@ public class View extends JFrame implements Observer {
 		
 		this.add(fridgeUsageChartPanel);
 		this.add(fridgeTemperatureChartPanel);
+		
+		this.setSize(500, 500);
 		setVisible(true);
 	}
 
