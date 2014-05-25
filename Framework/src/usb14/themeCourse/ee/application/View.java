@@ -72,8 +72,10 @@ public class View extends JFrame implements Observer {
 	public void update(Observable observable, Object object) {
 		int time = controller.getTime();
 		if (observable == fridge) {
+			if (time > 0) {
+				fridgeUsageSeries.add(time - controller.getIntervalDuration(), fridge.getCurrentUsage());
+			}
 			fridgeUsageSeries.add(time, fridge.getCurrentUsage());
-			fridgeUsageSeries.add(time + controller.getIntervalDuration(), fridge.getCurrentUsage());
 			fridgeTemperatureSeries.add(time, fridge.getTemp());
 		}
 	}

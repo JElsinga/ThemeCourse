@@ -56,11 +56,15 @@ public class Controller extends Thread{
 	// Commands
 	
 	public void run() {
-		int runTime = 50;
 		Double price = 1000.0;
 		
-		for(int i=0; i < runTime; i++) {
+		while(this.time < 1440) {
 			controllable.updatePrice(price);
+			
+			try {
+				sleep(200);
+			} catch (InterruptedException e) {}
+			
 			controllable.updateState();
 			this.time+=interval;
 		}
