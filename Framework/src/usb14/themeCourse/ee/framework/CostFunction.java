@@ -1,9 +1,11 @@
 package usb14.themeCourse.ee.framework;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.TreeMap;
 
 import javax.swing.RowFilter.Entry;
 
@@ -25,7 +27,9 @@ public class CostFunction {
 	
 	
 	// Queries
-	
+	public SortedMap<Double, Double> getCosts(){
+		return costByDemandMap;
+	}
 	
 	/**
 	 * Gets the cost associated with a given demand
@@ -46,7 +50,6 @@ public class CostFunction {
 					previous = dem;
 				}
 			}
-			
 		}
 		return result;
 	}
@@ -57,7 +60,6 @@ public class CostFunction {
 	 * @return		The demand associated with the cost
 	 */
 	public double getDemandByCost(double cost) {
-
 		double viable = 0;
 		Set<Double> set = costByDemandMap.keySet();
 		//System.out.println(set);
@@ -90,13 +92,20 @@ public class CostFunction {
 	}
 	
 	/**
-	 * Returns a new ConstFunction that is the aggregation
+	 * Returns a new CostFunction that is the aggregation
 	 * of this CostFunction and the given CostFunction.
 	 * @param cf	The CostFunction that is to be added to this one.
 	 * @return		The new CostFunction
 	 */
 	public CostFunction add(CostFunction cf){
-		// TODO Auto-generated method stub
+		SortedMap<Double, Double> result = new TreeMap<Double, Double>();
+		for(java.util.Map.Entry<Double, Double> entryFunction1: costByDemandMap.entrySet() ){
+			for(java.util.Map.Entry<Double, Double> entryFunction2: cf.getCosts().entrySet()){
+				// todo check of Albert het eens is met onze oplossing.
+			}
+			
+		}
+		
 		return null;
 	}
 	
