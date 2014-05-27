@@ -17,6 +17,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 import usb14.themeCourse.ee.framework.Controllable;
 import usb14.themeCourse.ee.framework.Controller;
 import usb14.themeCourse.ee.framework.Fridge;
+import usb14.themeCourse.ee.framework.WashingMachine;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -28,9 +29,13 @@ public class View extends JFrame implements Observer {
 	private static final long serialVersionUID = 9125637833500321931L;
 	
 	private Controller controller;
+	
 	private Fridge fridge;
 	private XYSeries fridgeUsageSeries;
 	private XYSeries fridgeTemperatureSeries;
+	
+	private WashingMachine washer;
+	private XYSeries washerUsageSeries;
 	
 	// Holds the usage of the last interval for every Controllable in order to make a better usage plot
 	private Map<Controllable, Double> lastUsageByControllable;
@@ -41,7 +46,10 @@ public class View extends JFrame implements Observer {
 		fridge = new Fridge("Super Fridge X9000");
 		fridge.addObserver(this);
 		
-		Controller.initialise(fridge, 10);
+		washer = new WashingMachine("Mega Washer 1000");
+		washer.addObserver(this);
+		
+		Controller.initialise(washer, 10);
 		controller = Controller.getInstance();
 		
 		initComponents();
@@ -72,8 +80,18 @@ public class View extends JFrame implements Observer {
 		ChartPanel fridgeTemperatureChartPanel = new ChartPanel(fridgeTemperatureChart);
 		fridgeTemperatureChartPanel.setMaximumDrawWidth(10000);
 		
+		// Washer Usage Plot
+		washerUsageSeries = new XYSeries("Washer Usage");
+		XYSeriesCollection washerUsageData = new XYSeriesCollection(washerUsageSeries);
+		JFreeChart washerUsageChart = ChartFactory.createXYLineChart(
+				"Washer Usage", "Time", "Usage", washerUsageData, PlotOrientation.VERTICAL,
+				false, false, false);
+		ChartPanel washerUsageChartPanel = new ChartPanel(washerUsageChart);
+		washerUsageChartPanel.setMaximumDrawWidth(10000);
+				
 		this.add(fridgeUsageChartPanel, "growx");
 		this.add(fridgeTemperatureChartPanel, "growx");
+		this.add(washerUsageChartPanel, "growx");
 		
 		this.setSize(500, 500);
 		setVisible(true);
@@ -89,6 +107,12 @@ public class View extends JFrame implements Observer {
 			lastUsageByControllable.put(fridge, fridge.getCurrentUsage());
 			
 			fridgeTemperatureSeries.add(time, fridge.getTemp());
+		}
+		if (observable == washer) {
+			if (lastUsageByControllable.containsKey(washer))
+				washerUsageSeries.add(time, lastUsageByControllable.get(washer));
+			washerUsageSeries.add(time, washer.getCurrentUsage());
+			lastUsageByControllable.put(washer, washer.getCurrentUsage());
 		}
 	}
 
