@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -95,14 +96,14 @@ public class CostFunction {
 		SortedMap<Integer, Integer> result = new TreeMap<Integer, Integer>();
 		
 		// list of all costs
-		Collection<Integer> values = new HashSet<Integer>();
+		SortedSet<Integer> values = new TreeSet<Integer>(); // elke value is unique want Set
 		values.addAll(this.costByDemandMap.values());	// TODO nieuwe functie van richard gebruiken
 		values.addAll(cf.costByDemandMap.values());
-		
-		// get highest cost
-		
-		
+				
 		// add to result
+		for(int highestCost: values){
+			result.put(this.getDemandByCost(highestCost) + cf.getDemandByCost(highestCost), highestCost);
+		}
 		
 		return null;
 	}
