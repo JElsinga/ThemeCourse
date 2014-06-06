@@ -31,8 +31,16 @@ public class CostFunction {
 	
 	
 	// Queries
-	public SortedMap<Integer, Integer> getCostByDemandMap(){
-		return costByDemandMap;
+	/**
+	 * Returns a strictly decreasing list of costs in this CostFunction
+	 * @return
+	 */
+	public List<Integer> getCosts(){
+		List<Integer> result = new ArrayList<Integer>();
+		for(int demand:costByDemandMap.values()){
+			result.add(getCostByDemand(demand));
+		}
+		return result;
 	}
 	
 	/**
@@ -40,7 +48,7 @@ public class CostFunction {
 	 * @param demand	The given demand
 	 * @return			The cost associated with the demand
 	 */
-	public double getCostByDemand(int demand) {
+	public int getCostByDemand(int demand) {
 		int result = 0;
 		if(costByDemandMap.containsKey(demand)){
 			result = costByDemandMap.get(demand);
