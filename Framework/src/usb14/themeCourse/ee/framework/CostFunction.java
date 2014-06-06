@@ -2,10 +2,12 @@ package usb14.themeCourse.ee.framework;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.swing.RowFilter.Entry;
 
@@ -28,6 +30,7 @@ public class CostFunction {
 		validate(costByDemandMap);
 		this.costByDemandMap = costByDemandMap;
 	}
+	
 	
 	
 	// Queries
@@ -74,14 +77,9 @@ public class CostFunction {
 	public int getDemandByCost(int cost) {
 		int viable = 0;
 		Set<Integer> set = costByDemandMap.keySet();
-		//System.out.println(set);
-		for(int d:set){
-			//System.out.print("Checking: "+costByDemandMap.get(d)+" ");
+		for(int d:set){	// kijk per demand of de cost groter of gelijk is aan cost
 			if(costByDemandMap.get(d) >= cost){
 				viable = d;
-				//System.out.println("Found viable: "+d);
-			}else{
-				//System.out.println("No viable found: "+viable);
 			}
 		}
 		return viable;
@@ -95,12 +93,16 @@ public class CostFunction {
 	 */
 	public CostFunction add(CostFunction cf){
 		SortedMap<Integer, Integer> result = new TreeMap<Integer, Integer>();
-		for(java.util.Map.Entry<Integer, Integer> entryFunction1: costByDemandMap.entrySet() ){
-			for(java.util.Map.Entry<Integer, Integer> entryFunction2: cf.getCostByDemandMap().entrySet()){
-				// todo check of Albert het eens is met onze oplossing.
-			}
-			
-		}
+		
+		// list of all costs
+		Collection<Integer> values = new HashSet<Integer>();
+		values.addAll(this.costByDemandMap.values());	// TODO nieuwe functie van richard gebruiken
+		values.addAll(cf.costByDemandMap.values());
+		
+		// get highest cost
+		
+		
+		// add to result
 		
 		return null;
 	}
