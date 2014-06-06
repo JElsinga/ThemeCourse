@@ -10,12 +10,12 @@ public class WashingMachine extends Appliance {
 	
 	private final int startInterval = 14 * 60;
 	private final int endInterval = 17 * 60;
-	private final double demand = 120.0;
-	private final double preferredCost = 900;
-	private final double maxCost = 1400;
+	private final int demand = 120;
+	private final int preferredCost = 900;
+	private final int maxCost = 1400;
 	
 	private State state;
-	private double currentPrice;
+	private int currentPrice;
 	private boolean hasStarted;
 	private boolean hasFinished;
 	private int remainingTime;
@@ -27,13 +27,13 @@ public class WashingMachine extends Appliance {
 		this.hasFinished = false;
 		this.remainingTime = 120;
 		
-		SortedMap<Double, Double> function = new TreeMap<Double, Double>();
-		function.put(demand, 0.0);
+		SortedMap<Integer, Integer> function = new TreeMap<Integer, Integer>();
+		function.put(demand, 0);
 		super.setCostFunction(new CostFunction(function));
 	}
 
 	@Override
-	public void updatePrice(double price) {
+	public void updatePrice(int price) {
 		this.currentPrice = price;
 		
 		// update state based on the current price
@@ -64,7 +64,7 @@ public class WashingMachine extends Appliance {
 			super.getCostFunction().updateCostForDemand(0, demand);
 		else if (!hasStarted && currentTime < endInterval) {
 			// If not started, but time to start watching, set price depending on how late it is
-			double cost = preferredCost + (maxCost - preferredCost) * (currentTime - startInterval) / (endInterval - startInterval);
+			int cost = preferredCost + (maxCost - preferredCost) * (currentTime - startInterval) / (endInterval - startInterval);
 			super.getCostFunction().updateCostForDemand(cost, demand);
 		}
 		else
@@ -74,7 +74,7 @@ public class WashingMachine extends Appliance {
 	}
 
 	@Override
-	public double getCurrentUsage() {
+	public int getCurrentUsage() {
 		return super.getCostFunction().getDemandByCost(currentPrice);
 	}
 

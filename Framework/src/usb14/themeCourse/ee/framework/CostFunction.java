@@ -12,7 +12,7 @@ import javax.swing.RowFilter.Entry;
 public class CostFunction {
 
 	//SortedMap<DEMAND,COST>
-	private SortedMap<Double, Double> costByDemandMap;
+	private SortedMap<Integer, Integer> costByDemandMap;
 	
 	
 	// Constructor
@@ -21,13 +21,13 @@ public class CostFunction {
 	/**
 	 * Creates a new CostFunction.
 	 */
-	public CostFunction(SortedMap<Double, Double> costByDemandMap) {
+	public CostFunction(SortedMap<Integer, Integer> costByDemandMap) {
 		this.costByDemandMap = costByDemandMap;
 	}
 	
 	
 	// Queries
-	public SortedMap<Double, Double> getCosts(){
+	public SortedMap<Integer, Integer> getCostByDemandMap(){
 		return costByDemandMap;
 	}
 	
@@ -36,13 +36,13 @@ public class CostFunction {
 	 * @param demand	The given demand
 	 * @return			The cost associated with the demand
 	 */
-	public double getCostByDemand(double demand) {
-		double result = 0;
+	public double getCostByDemand(int demand) {
+		int result = 0;
 		if(costByDemandMap.containsKey(demand)){
 			result = costByDemandMap.get(demand);
 		}else{
-			double previous = 0;
-			for(double dem:costByDemandMap.keySet()){
+			int previous = 0;
+			for(int dem:costByDemandMap.keySet()){
 				if(dem > demand){
 					result = costByDemandMap.get(previous);
 					break;
@@ -59,11 +59,11 @@ public class CostFunction {
 	 * @param cost	The given cost
 	 * @return		The demand associated with the cost
 	 */
-	public double getDemandByCost(double cost) {
-		double viable = 0;
-		Set<Double> set = costByDemandMap.keySet();
+	public int getDemandByCost(int cost) {
+		int viable = 0;
+		Set<Integer> set = costByDemandMap.keySet();
 		//System.out.println(set);
-		for(double d:set){
+		for(int d:set){
 			//System.out.print("Checking: "+costByDemandMap.get(d)+" ");
 			if(costByDemandMap.get(d) >= cost){
 				viable = d;
@@ -73,22 +73,6 @@ public class CostFunction {
 			}
 		}
 		return viable;
-		//return 0.0;
-		/**
-		double result = 0;
-		double previous = 0;
-		for(double d:costByDemandMap.keySet()){
-			if(costByDemandMap.get(d) < cost){
-				result = previous;
-				System.out.println("True Result: "+result+", previous: "+previous);
-				
-			}else{
-				previous = d;
-				System.out.println("False Result: "+result+", previous: "+previous);
-			}
-		}
-		return result;
-		*/
 	}
 	
 	/**
@@ -98,9 +82,9 @@ public class CostFunction {
 	 * @return		The new CostFunction
 	 */
 	public CostFunction add(CostFunction cf){
-		SortedMap<Double, Double> result = new TreeMap<Double, Double>();
-		for(java.util.Map.Entry<Double, Double> entryFunction1: costByDemandMap.entrySet() ){
-			for(java.util.Map.Entry<Double, Double> entryFunction2: cf.getCosts().entrySet()){
+		SortedMap<Integer, Integer> result = new TreeMap<Integer, Integer>();
+		for(java.util.Map.Entry<Integer, Integer> entryFunction1: costByDemandMap.entrySet() ){
+			for(java.util.Map.Entry<Integer, Integer> entryFunction2: cf.getCostByDemandMap().entrySet()){
 				// todo check of Albert het eens is met onze oplossing.
 			}
 			
@@ -119,7 +103,7 @@ public class CostFunction {
 	 * @throws 	IllegalArgumentException when the given demand does not exist
 	 * 			in this cost function.
 	 */
-	protected void updateCostForDemand(double cost, double demand){
+	protected void updateCostForDemand(int cost, int demand){
 		if (costByDemandMap.containsKey(demand))
 			costByDemandMap.put(demand, cost);
 		else
@@ -128,7 +112,7 @@ public class CostFunction {
 	
 	public String toString(){
 		String result = "";
-		for(java.util.Map.Entry<Double, Double> entry :costByDemandMap.entrySet()){
+		for(java.util.Map.Entry<Integer, Integer> entry :costByDemandMap.entrySet()){
 			
 			result = result + "\t Entry: "+ entry.toString();
 		}

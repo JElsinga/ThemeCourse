@@ -56,7 +56,7 @@ public class Controller extends Thread{
 	// Commands
 	
 	public void run() {
-		Double price = 1000.0;
+		int price = 1000;
 		
 		while(this.time < 1440) {
 			controllable.updatePrice(price);

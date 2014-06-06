@@ -46,8 +46,8 @@ public class Network extends Observable implements Controllable {
 	 * @return	the sum of the usages of its children.
 	 */
 	@Override
-	public double getCurrentUsage() {
-		double result = 0;
+	public int getCurrentUsage() {
+		int result = 0;
 		for(Controllable controllable: children){
 			result += controllable.getCurrentUsage();
 		}
@@ -75,7 +75,7 @@ public class Network extends Observable implements Controllable {
 	 * @param price	The new price for energy.
 	 */
 	@Override
-	public void updatePrice(double price) {
+	public void updatePrice(int price) {
 		for(Controllable controllable: children){
 			controllable.updatePrice(price);
 		}

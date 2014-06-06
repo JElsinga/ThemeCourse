@@ -11,9 +11,9 @@ public class Fridge extends Appliance{
 	private State state;
 	private double temp;
 	private int time;
-	private double currentPrice;
-	private final double usage = 283.5;
-	private final double maxCost = 1500;
+	private int currentPrice;
+	private final int usage = 280;
+	private final int maxCost = 1500;
 
 	// Constructor
 	
@@ -25,8 +25,8 @@ public class Fridge extends Appliance{
 		this.time = 0;
 		this.currentPrice = 0;
 		
-		SortedMap<Double, Double> function = new TreeMap<Double, Double>();
-		function.put(usage, 0.0);	
+		SortedMap<Integer, Integer> function = new TreeMap<Integer, Integer>();
+		function.put(usage, 0);	
 		super.setCostFunction(new CostFunction(function));
 	}
 	
@@ -34,7 +34,7 @@ public class Fridge extends Appliance{
 	// Queries
 	
 	@Override
-	public double getCurrentUsage() {
+	public int getCurrentUsage() {
 		return super.getCostFunction().getDemandByCost(currentPrice);
 	}
 	
@@ -50,14 +50,14 @@ public class Fridge extends Appliance{
 	// Commands
 	
 	private void updateCostFunction(){
-		double cost = 1000;
+		int cost = 1000;
 		if(time > 0 && time < 20) cost = maxCost;
 		else if(temp >= 7.5){
 			cost = maxCost;
 		} else if(temp < 2.5){ 
 			cost = 0;
 		} else{
-			cost = Math.round((maxCost+2000)/(8-temp));
+			cost = (maxCost+2000)/(int)(8-temp);
 		}
 		super.getCostFunction().updateCostForDemand(cost, usage);
 	}
@@ -82,7 +82,7 @@ public class Fridge extends Appliance{
 	}
 	
 	@Override
-	public void updatePrice(double price){
+	public void updatePrice(int price){
 		this.currentPrice = price;
 		
 		// update state based on the current price

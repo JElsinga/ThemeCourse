@@ -38,10 +38,10 @@ public class View extends JFrame implements Observer {
 	private XYSeries washerUsageSeries;
 	
 	// Holds the usage of the last interval for every Controllable in order to make a better usage plot
-	private Map<Controllable, Double> lastUsageByControllable;
+	private Map<Controllable, Integer> lastUsageByControllable;
 
 	public View(){
-		lastUsageByControllable = new HashMap<Controllable, Double>();
+		lastUsageByControllable = new HashMap<Controllable, Integer>();
 		
 		fridge = new Fridge("Super Fridge X9000");
 		fridge.addObserver(this);
@@ -49,7 +49,7 @@ public class View extends JFrame implements Observer {
 		washer = new WashingMachine("Mega Washer 1000");
 		washer.addObserver(this);
 		
-		Controller.initialise(washer, 10);
+		Controller.initialise(fridge, 10);
 		controller = Controller.getInstance();
 		
 		initComponents();
