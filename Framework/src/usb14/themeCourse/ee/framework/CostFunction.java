@@ -25,15 +25,7 @@ public class CostFunction {
 	 * Creates a new CostFunction.
 	 */
 	public CostFunction(SortedMap<Integer, Integer> costByDemandMap) {
-		int previousPrice = MAX_COST + 1;
-		for(int demand:costByDemandMap.keySet()){
-			if (costByDemandMap.get(demand) < MIN_COST || costByDemandMap.get(demand) > MAX_COST){
-				throw new IllegalArgumentException("Prices must be between " + MIN_COST + " and " + MAX_COST);
-			}
-			if (costByDemandMap.get(demand) >= previousPrice){
-				throw new IllegalArgumentException("A cost function must be strictly decreasing");
-			}
-		}
+		validate(costByDemandMap);
 		this.costByDemandMap = costByDemandMap;
 	}
 	
@@ -113,15 +105,27 @@ public class CostFunction {
 	 * @param cost		The new cost associated by the given demand 
 	 * @param demand	The demand
 	 * @throws 	IllegalArgumentException when the given demand does not exist
-	 * 			in this cost function.
+	 * 			in this cost function, or when cost is not between MIN_COST
+	 * 			and MAX_COST.
 	 */
 	protected void updateCostForDemand(int cost, int demand){
-		if (cost < MIN_COST || cost > MAX_COST)
-			throw new IllegalArgumentException("Prices must be between " + MIN_COST + " and " + MAX_COST);
-		if (costByDemandMap.containsKey(demand))
+		Integer oldCost = costByDemandMap.get(demand);
+		if (oldCost == null)
 			costByDemandMap.put(demand, cost);
 		else
 			throw new IllegalArgumentException("The given demand does not exist in the cost function.");
+		
+		try
+		{
+			validate(costByDemandMap);
+		}
+		catch (Exception e)
+		{
+			// Restore state
+			costByDemandMap.put(demand, oldCost);
+			// Rethrow exception
+			throw e;
+		}
 	}
 	
 	public String toString(){
@@ -130,5 +134,17 @@ public class CostFunction {
 			result = result + "\t Entry: "+ entry.toString();
 		}
 		return result;
+	}
+	
+	private void validate(SortedMap<Integer, Integer> costByDemandMap){
+		int previousPrice = MAX_COST + 1;
+		for(int demand:costByDemandMap.keySet()){
+			if (costByDemandMap.get(demand) < MIN_COST || costByDemandMap.get(demand) > MAX_COST){
+				throw new IllegalArgumentException("Prices must be between " + MIN_COST + " and " + MAX_COST);
+			}
+			if (costByDemandMap.get(demand) >= previousPrice){
+				throw new IllegalArgumentException("A cost function must be strictly decreasing");
+			}
+		}
 	}
 }
