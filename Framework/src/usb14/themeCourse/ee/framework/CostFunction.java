@@ -10,6 +10,9 @@ import java.util.TreeMap;
 import javax.swing.RowFilter.Entry;
 
 public class CostFunction {
+	
+	public static final int MAX_COST = 1000;
+	public static final int MIN_COST = 0;
 
 	//SortedMap<DEMAND,COST>
 	private SortedMap<Integer, Integer> costByDemandMap;
@@ -22,6 +25,15 @@ public class CostFunction {
 	 * Creates a new CostFunction.
 	 */
 	public CostFunction(SortedMap<Integer, Integer> costByDemandMap) {
+		int previousPrice = MAX_COST + 1;
+		for(int demand:costByDemandMap.keySet()){
+			if (costByDemandMap.get(demand) < MIN_COST || costByDemandMap.get(demand) > MAX_COST){
+				throw new IllegalArgumentException("Prices must be between " + MIN_COST + " and " + MAX_COST);
+			}
+			if (costByDemandMap.get(demand) >= previousPrice){
+				throw new IllegalArgumentException("A cost function must be strictly decreasing");
+			}
+		}
 		this.costByDemandMap = costByDemandMap;
 	}
 	
@@ -104,6 +116,8 @@ public class CostFunction {
 	 * 			in this cost function.
 	 */
 	protected void updateCostForDemand(int cost, int demand){
+		if (cost < MIN_COST || cost > MAX_COST)
+			throw new IllegalArgumentException("Prices must be between " + MIN_COST + " and " + MAX_COST);
 		if (costByDemandMap.containsKey(demand))
 			costByDemandMap.put(demand, cost);
 		else
@@ -113,7 +127,6 @@ public class CostFunction {
 	public String toString(){
 		String result = "";
 		for(java.util.Map.Entry<Integer, Integer> entry :costByDemandMap.entrySet()){
-			
 			result = result + "\t Entry: "+ entry.toString();
 		}
 		return result;
