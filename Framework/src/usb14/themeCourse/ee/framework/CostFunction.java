@@ -121,11 +121,10 @@ public class CostFunction {
 	 */
 	protected void updateCostForDemand(int cost, int demand){
 		Integer oldCost = costByDemandMap.get(demand);
-		if (oldCost == null)
+		if (oldCost != null)
 			costByDemandMap.put(demand, cost);
 		else
 			throw new IllegalArgumentException("The given demand does not exist in the cost function.");
-		
 		try
 		{
 			validate(costByDemandMap);
