@@ -13,7 +13,6 @@ public class Battery extends Appliance{
 	private int currentPrice;
 	public CostFunction charge;
 	public CostFunction discharge;
-	private int maxCost = 1000;
 	private double slopeDischarge = -0.0015;
 	private double slopeCharge = -1.9;
 	private double power = 2.9;

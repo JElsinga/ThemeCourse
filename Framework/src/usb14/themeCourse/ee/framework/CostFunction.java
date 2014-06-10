@@ -1,10 +1,5 @@
 package usb14.themeCourse.ee.framework;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -63,18 +58,24 @@ public class CostFunction {
 	/**
 	 * Gets the cost associated with a given demand
 	 * @param demand	The given demand
-	 * @return			The cost associated with the demand
+	 * @return			The cost associated with the demand,
+	 * 					returns MAX_COST + 1 if all demands in the cost
+	 * 					function are higher than the given demand or 0
+	 * 					when the demand is higher than any demand in the
+	 * 					cost function. 
 	 */
 	public int getCostByDemand(int demand) {
 		int result = 0;
 		if(costByDemandMap.containsKey(demand)){
 			result = costByDemandMap.get(demand);
-			//System.out.println("result: "+ result);
-		}else{
-			int previous = 0;
-			for(int dem:costByDemandMap.keySet()){
+		} else {
+			int previous = Integer.MIN_VALUE;
+			for(int dem : getDemands()){
 				if(dem > demand){
-					result = costByDemandMap.get(previous);
+					if (previous == Integer.MIN_VALUE)
+						result = MAX_COST + 1;
+					else
+						result = costByDemandMap.get(previous);
 					break;
 				}else{
 					previous = dem;
@@ -91,13 +92,9 @@ public class CostFunction {
 	 */
 	public int getDemandByCost(int cost) {
 		int viable = 0;
-		Set<Integer> set = costByDemandMap.keySet();
-		//System.out.println("set: "+set);
-		for(int d:set){	// kijk per demand of de cost groter of gelijk is aan cost
-			//System.out.println("d: "+d+" cost: "+costByDemandMap.get(d));
-			if(costByDemandMap.get(d) >= cost){
-				//System.out.println("Current demand is: "+d);
-				viable = d;
+		for(int dem : getDemands()){	// kijk per demand of de cost groter of gelijk is aan cost
+			if(costByDemandMap.get(dem) >= cost){
+				viable = dem;
 			}
 		}
 		return viable;
@@ -166,6 +163,9 @@ public class CostFunction {
 	private void validate(SortedMap<Integer, Integer> costByDemandMap){
 		int previousPrice = MAX_COST + 1;
 		for(int demand:costByDemandMap.keySet()){
+			if (demand == Integer.MIN_VALUE){
+				throw new IllegalArgumentException("Demand cannot be Integer.MIN_VALUE (" + Integer.MIN_VALUE + ")");
+			}
 			if (costByDemandMap.get(demand) < MIN_COST || costByDemandMap.get(demand) > MAX_COST){
 				throw new IllegalArgumentException("Prices must be between " + MIN_COST + " and " + MAX_COST);
 			}
