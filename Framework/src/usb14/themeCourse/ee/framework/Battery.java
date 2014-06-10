@@ -61,19 +61,16 @@ public class Battery extends Appliance{
 		int cost;
 		//Cost for demand zero is always zero
 		//Update for discharge cost function
-		Iterator dischargeIter = discharge.getCostByDemandMap().keySet().iterator();
-		while(dischargeIter.hasNext()){
-			int demand = (int) dischargeIter.next();
+		for(int demand : discharge.getDemands()){
 			cost = (int) Math.abs((slopeDischarge*Math.pow(Math.abs(demand),power)));// - slope*maxLoad + 50);
 			cost = load+demand < 0 ? 0 : cost;
 			//System.out.println("Updateing discharge, demand: "+demand+" cost: "+cost+" load+demand: "+(load+demand));
 			discharge.updateCostForDemand(cost, demand);
 			super.getCostFunction().updateCostForDemand(cost, demand);
 		}
-		//Update for charge cost function		
-		Iterator chargeIter = charge.getCostByDemandMap().keySet().iterator();
-		while(chargeIter.hasNext()){
-			int demand = (int) chargeIter.next();
+		
+		//Update for charge cost function
+		for(int demand : discharge.getDemands()){
 			cost = (int) (slopeCharge*demand - slopeCharge*maxLoad + 100);
 			cost = cost > 0 ? cost : 0;
 			cost = load+Math.abs(demand) > maxLoad ? 0 : cost;

@@ -53,7 +53,7 @@ public class View extends JFrame implements Observer {
 		washer = new WashingMachine("Mega Washer 1000");
 		washer.addObserver(this);
 		
-		battery = new Battery("This is a battery");
+		battery = new Battery("Battery");
 		battery.addObserver(this);
 		
 		Controller.initialise(battery, 10);
@@ -99,10 +99,10 @@ public class View extends JFrame implements Observer {
 		// Battery Usage Plot
 		batteryUsageSeries = new XYSeries("Battery Usage");
 		XYSeriesCollection batteryUsageData = new XYSeriesCollection(batteryUsageSeries);
-		JFreeChart batterUsageChart = ChartFactory.createXYLineChart(
+		JFreeChart batteryUsageChart = ChartFactory.createXYLineChart(
 				"Battery Usage", "Time","Usage", batteryUsageData, PlotOrientation.VERTICAL,
 				false, false, false);
-		ChartPanel batteryUsageChartPanel = new ChartPanel(batterUsageChart);
+		ChartPanel batteryUsageChartPanel = new ChartPanel(batteryUsageChart);
 		batteryUsageChartPanel.setMaximumDrawWidth(10000);
 		
 		//this.add(fridgeUsageChartPanel, "growx");

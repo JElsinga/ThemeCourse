@@ -10,8 +10,6 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import javax.swing.RowFilter.Entry;
-
 public class CostFunction {
 	
 	public static final int MAX_COST = 15000;
@@ -37,20 +35,27 @@ public class CostFunction {
 	// Queries
 	
 	/**
-	 * Added by Jochem (needed for Battery)
+	 * Returns a strictly increasing array of demands in this CostFunction
 	 */
-	public SortedMap<Integer, Integer> getCostByDemandMap(){
-		return costByDemandMap;
+	public int[] getDemands(){
+		int result[] = new int[costByDemandMap.keySet().size()];
+		int i = 0;
+		for(int demand : costByDemandMap.keySet()){
+			result[i] = demand;
+			i++;
+		}
+		return result;
 	}
 	
 	/**
-	 * Returns a strictly decreasing list of costs in this CostFunction
-	 * @return
+	 * Returns a strictly decreasing array of costs in this CostFunction
 	 */
-	public List<Integer> getCosts(){
-		List<Integer> result = new ArrayList<Integer>();
-		for(int demand:costByDemandMap.values()){
-			result.add(getCostByDemand(demand));
+	public int[] getCosts(){
+		int result[] = new int[costByDemandMap.keySet().size()];
+		int i = 0;
+		for(int demand : costByDemandMap.keySet()){
+			result[i] = costByDemandMap.get(demand);
+			i++;
 		}
 		return result;
 	}
