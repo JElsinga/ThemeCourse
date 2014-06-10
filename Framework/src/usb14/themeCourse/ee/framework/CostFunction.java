@@ -14,8 +14,8 @@ import javax.swing.RowFilter.Entry;
 
 public class CostFunction {
 	
-	public static final int MAX_COST = 1000;
-	public static final int MIN_COST = 0;
+	public static final int MAX_COST = 15000;
+	public static final int MIN_COST = -1500;
 
 	//SortedMap<DEMAND,COST>
 	private SortedMap<Integer, Integer> costByDemandMap;
@@ -35,6 +35,14 @@ public class CostFunction {
 	
 	
 	// Queries
+	
+	/**
+	 * Added by Jochem (needed for Battery)
+	 */
+	public SortedMap<Integer, Integer> getCostByDemandMap(){
+		return costByDemandMap;
+	}
+	
 	/**
 	 * Returns a strictly decreasing list of costs in this CostFunction
 	 * @return
@@ -56,6 +64,7 @@ public class CostFunction {
 		int result = 0;
 		if(costByDemandMap.containsKey(demand)){
 			result = costByDemandMap.get(demand);
+			//System.out.println("result: "+ result);
 		}else{
 			int previous = 0;
 			for(int dem:costByDemandMap.keySet()){
@@ -78,8 +87,11 @@ public class CostFunction {
 	public int getDemandByCost(int cost) {
 		int viable = 0;
 		Set<Integer> set = costByDemandMap.keySet();
+		//System.out.println("set: "+set);
 		for(int d:set){	// kijk per demand of de cost groter of gelijk is aan cost
+			//System.out.println("d: "+d+" cost: "+costByDemandMap.get(d));
 			if(costByDemandMap.get(d) >= cost){
+				//System.out.println("Current demand is: "+d);
 				viable = d;
 			}
 		}

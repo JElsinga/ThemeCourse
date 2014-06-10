@@ -14,6 +14,7 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
+import usb14.themeCourse.ee.framework.Battery;
 import usb14.themeCourse.ee.framework.Controllable;
 import usb14.themeCourse.ee.framework.Controller;
 import usb14.themeCourse.ee.framework.Fridge;
@@ -37,6 +38,9 @@ public class View extends JFrame implements Observer {
 	private WashingMachine washer;
 	private XYSeries washerUsageSeries;
 	
+	private Battery battery;
+	private XYSeries batteryUsageSeries;
+	
 	// Holds the usage of the last interval for every Controllable in order to make a better usage plot
 	private Map<Controllable, Integer> lastUsageByControllable;
 
@@ -49,7 +53,10 @@ public class View extends JFrame implements Observer {
 		washer = new WashingMachine("Mega Washer 1000");
 		washer.addObserver(this);
 		
-		Controller.initialise(fridge, 10);
+		battery = new Battery("This is a battery");
+		battery.addObserver(this);
+		
+		Controller.initialise(battery, 10);
 		controller = Controller.getInstance();
 		
 		initComponents();
@@ -89,12 +96,23 @@ public class View extends JFrame implements Observer {
 		ChartPanel washerUsageChartPanel = new ChartPanel(washerUsageChart);
 		washerUsageChartPanel.setMaximumDrawWidth(10000);
 				
-		this.add(fridgeUsageChartPanel, "growx");
-		this.add(fridgeTemperatureChartPanel, "growx");
-		this.add(washerUsageChartPanel, "growx");
+		// Battery Usage Plot
+		batteryUsageSeries = new XYSeries("Battery Usage");
+		XYSeriesCollection batteryUsageData = new XYSeriesCollection(batteryUsageSeries);
+		JFreeChart batterUsageChart = ChartFactory.createXYLineChart(
+				"Battery Usage", "Time","Usage", batteryUsageData, PlotOrientation.VERTICAL,
+				false, false, false);
+		ChartPanel batteryUsageChartPanel = new ChartPanel(batterUsageChart);
+		batteryUsageChartPanel.setMaximumDrawWidth(10000);
 		
-		this.setSize(500, 500);
+		//this.add(fridgeUsageChartPanel, "growx");
+		//this.add(fridgeTemperatureChartPanel, "growx");
+		//this.add(washerUsageChartPanel, "growx");
+		this.add(batteryUsageChartPanel, "growx");
+		
+		this.setSize(750, 750);
 		setVisible(true);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
 	@Override
@@ -113,6 +131,13 @@ public class View extends JFrame implements Observer {
 				washerUsageSeries.add(time, lastUsageByControllable.get(washer));
 			washerUsageSeries.add(time, washer.getCurrentUsage());
 			lastUsageByControllable.put(washer, washer.getCurrentUsage());
+		}
+		if (observable == battery){
+			if(lastUsageByControllable.containsKey(battery))
+				batteryUsageSeries.add(time, lastUsageByControllable.get(battery));
+			batteryUsageSeries.add(time,battery.getCurrentUsage());
+			
+			lastUsageByControllable.put(battery, battery.getCurrentUsage());
 		}
 	}
 

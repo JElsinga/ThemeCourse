@@ -13,7 +13,7 @@ public class Fridge extends Appliance{
 	private int time;
 	private int currentPrice;
 	private final int usage = 280;
-	private final int maxCost = 1500;
+	private final int maxCost = 1000;
 
 	// Constructor
 	
