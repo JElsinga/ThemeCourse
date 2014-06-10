@@ -110,8 +110,8 @@ public class CostFunction {
 		SortedMap<Integer, Integer> result = new TreeMap<Integer, Integer>();
 		
 		// list of all costs
-		SortedSet<Integer> values = new TreeSet<Integer>(); // elke value is unique want Set
-		values.addAll(this.costByDemandMap.values());	// TODO nieuwe functie van richard gebruiken
+		SortedSet<Integer> values = new TreeSet<Integer>();
+		values.addAll(this.costByDemandMap.values());
 		values.addAll(cf.costByDemandMap.values());
 				
 		// add to result
@@ -119,7 +119,7 @@ public class CostFunction {
 			result.put(this.getDemandByCost(highestCost) + cf.getDemandByCost(highestCost), highestCost);
 		}
 		
-		return null;
+		return new CostFunction(result);
 	}
 	
 	

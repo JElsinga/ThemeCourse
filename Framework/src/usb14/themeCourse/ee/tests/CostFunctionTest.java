@@ -26,6 +26,13 @@ public class CostFunctionTest implements UnitTest {
 			errors++;
 		}
 		
+		if(testAdd())
+			System.out.println("Okay");
+		else{
+			System.out.println("Error");
+			errors++;
+		}
+		
 		return errors;
 	}
 	
@@ -63,6 +70,29 @@ public class CostFunctionTest implements UnitTest {
 				cf.getCostByDemand(0) != 500 ||
 				cf.getCostByDemand(1) != 300 ||
 				cf.getCostByDemand(3) != 0)
+			return false;
+		else
+			return true;
+	}
+	
+	private boolean testAdd(){
+		System.out.print("Testing add... ");
+		SortedMap<Integer, Integer> map1 = new TreeMap<Integer, Integer>();
+		map1.put(10, 20);
+		map1.put(20, 10);
+		SortedMap<Integer, Integer> map2 = new TreeMap<Integer, Integer>();
+		map2.put(10, 30);
+		map2.put(20, 10);
+		CostFunction cf1 = new CostFunction(map1);
+		CostFunction cf2 = new CostFunction(map2);
+		
+		CostFunction cf = cf1.add(cf2);
+		if (cf.getCostByDemand(0) != CostFunction.MAX_COST + 1 ||
+				cf.getCostByDemand(10) != 30 ||
+				cf.getCostByDemand(20) != 20 ||
+				cf.getCostByDemand(30) != 20 ||	// Weet niet zeker of dit wel zo zou moeten zijn
+				cf.getCostByDemand(40) != 10 ||
+				cf.getCostByDemand(50) != 0)
 			return false;
 		else
 			return true;

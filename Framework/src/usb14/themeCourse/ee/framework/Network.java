@@ -91,7 +91,8 @@ public class Network extends Observable implements Controllable {
 		for(Controllable controllable: children){
 			controllable.updateState();
 		}
-		notifyObservers();		
+		
+		notifyObservers();	
 	}
 	
 	
