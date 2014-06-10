@@ -19,6 +19,7 @@ import usb14.themeCourse.ee.framework.Controllable;
 import usb14.themeCourse.ee.framework.Controller;
 import usb14.themeCourse.ee.framework.Fridge;
 import usb14.themeCourse.ee.framework.WashingMachine;
+import usb14.themeCourse.ee.framework.Network;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -41,6 +42,9 @@ public class View extends JFrame implements Observer {
 	private Battery battery;
 	private XYSeries batteryUsageSeries;
 	
+	private Network network;
+	private XYSeries networkUsageSeries;
+	
 	// Holds the usage of the last interval for every Controllable in order to make a better usage plot
 	private Map<Controllable, Integer> lastUsageByControllable;
 
@@ -56,7 +60,12 @@ public class View extends JFrame implements Observer {
 		battery = new Battery("Battery");
 		battery.addObserver(this);
 		
-		Controller.initialise(battery, 10);
+		network = new Network();
+		network.addControllable(fridge);
+		network.addControllable(washer);
+		network.addObserver(this);
+		
+		Controller.initialise(network, 10);
 		controller = Controller.getInstance();
 		
 		initComponents();
@@ -105,10 +114,20 @@ public class View extends JFrame implements Observer {
 		ChartPanel batteryUsageChartPanel = new ChartPanel(batteryUsageChart);
 		batteryUsageChartPanel.setMaximumDrawWidth(10000);
 		
-		//this.add(fridgeUsageChartPanel, "growx");
-		//this.add(fridgeTemperatureChartPanel, "growx");
-		//this.add(washerUsageChartPanel, "growx");
+		// Network Usage Plot
+		networkUsageSeries = new XYSeries("Network Usage");
+		XYSeriesCollection networkUsageData = new XYSeriesCollection(networkUsageSeries);
+		JFreeChart networkUsageChart = ChartFactory.createXYLineChart(
+				"Network Usage", "Time","Usage", batteryUsageData, PlotOrientation.VERTICAL,
+				false, false, false);
+		ChartPanel networkUsageChartPanel = new ChartPanel(networkUsageChart);
+		networkUsageChartPanel.setMaximumDrawWidth(10000);
+		
+		this.add(fridgeUsageChartPanel, "growx");
+		this.add(fridgeTemperatureChartPanel, "growx");
+		this.add(washerUsageChartPanel, "growx");
 		this.add(batteryUsageChartPanel, "growx");
+		this.add(networkUsageChartPanel, "growx");
 		
 		this.setSize(750, 750);
 		setVisible(true);
@@ -135,9 +154,16 @@ public class View extends JFrame implements Observer {
 		if (observable == battery){
 			if(lastUsageByControllable.containsKey(battery))
 				batteryUsageSeries.add(time, lastUsageByControllable.get(battery));
-			batteryUsageSeries.add(time,battery.getCurrentUsage());
+			batteryUsageSeries.add(time, battery.getCurrentUsage());
 			
 			lastUsageByControllable.put(battery, battery.getCurrentUsage());
+		}
+		if (observable == network){
+			if(lastUsageByControllable.containsKey(network))
+				networkUsageSeries.add(time, lastUsageByControllable.get(network));
+			networkUsageSeries.add(time, network.getCurrentUsage());
+			
+			lastUsageByControllable.put(network, network.getCurrentUsage());
 		}
 	}
 

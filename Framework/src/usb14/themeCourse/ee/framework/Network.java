@@ -1,5 +1,6 @@
 package usb14.themeCourse.ee.framework;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 
@@ -17,7 +18,9 @@ public class Network extends Observable implements Controllable {
 	/**
 	 * Constructor
 	 */
-	public Network() {}
+	public Network() {
+		children = new ArrayList<Controllable>();
+	}
 	
 	
 	// Queries

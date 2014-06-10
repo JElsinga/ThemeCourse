@@ -13,7 +13,7 @@ public class Fridge extends Appliance{
 	private int time;
 	private int currentPrice;
 	private final int usage = 280;
-	private final int maxCost = 1000;
+	private final int maxCost = CostFunction.MAX_COST;
 
 	// Constructor
 	
@@ -57,7 +57,8 @@ public class Fridge extends Appliance{
 		} else if(temp < 2.5){ 
 			cost = 0;
 		} else{
-			cost = (maxCost+2000)/(int)(8-temp);
+			
+			cost = (int) Math.round(((double)maxCost)/(8-temp));
 		}
 		super.getCostFunction().updateCostForDemand(cost, usage);
 	}

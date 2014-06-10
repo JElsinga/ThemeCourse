@@ -7,8 +7,8 @@ import java.util.TreeSet;
 
 public class CostFunction {
 	
-	public static final int MAX_COST = 15000;
-	public static final int MIN_COST = -1500;
+	public static final int MAX_COST = 1000;
+	public static final int MIN_COST = 0;
 
 	//SortedMap<DEMAND,COST>
 	private SortedMap<Integer, Integer> costByDemandMap;

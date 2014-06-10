@@ -11,8 +11,7 @@ public class WashingMachine extends Appliance {
 	private final int startInterval = 14 * 60;
 	private final int endInterval = 17 * 60;
 	private final int demand = 120;
-	private final int preferredCost = 900;
-	private final int maxCost = 1400;
+	private final int preferredCost = 450;
 	
 	private State state;
 	private int currentPrice;
@@ -64,12 +63,12 @@ public class WashingMachine extends Appliance {
 			super.getCostFunction().updateCostForDemand(0, demand);
 		else if (!hasStarted && currentTime < endInterval) {
 			// If not started, but time to start watching, set price depending on how late it is
-			int cost = preferredCost + (maxCost - preferredCost) * (currentTime - startInterval) / (endInterval - startInterval);
+			int cost = preferredCost + (CostFunction.MAX_COST - preferredCost) * (currentTime - startInterval) / (endInterval - startInterval);
 			super.getCostFunction().updateCostForDemand(cost, demand);
 		}
 		else
 			// If already started, or we really need to start washing, set to our maximum price
-			super.getCostFunction().updateCostForDemand(maxCost, demand);
+			super.getCostFunction().updateCostForDemand(CostFunction.MAX_COST, demand);
 		
 	}
 
