@@ -58,8 +58,8 @@ public class Controller extends Thread{
 	public void run() {
 		int price = 500;
 		
-		while(this.time <= 24){
-		//while(this.time < 1440) {
+		//while(this.time <= 24){
+		while(this.time < 1440) {
 			controllable.updatePrice(price);
 			
 			try {

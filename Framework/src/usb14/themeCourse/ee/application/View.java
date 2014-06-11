@@ -60,6 +60,7 @@ public class View extends JFrame implements Observer {
 		network = new Network();
 		network.addControllable(fridge);
 		network.addControllable(washer);
+		network.addControllable(battery);
 		network.addObserver(this);
 		
 		Controller.initialise(network, 10);

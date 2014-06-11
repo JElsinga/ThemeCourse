@@ -3,6 +3,7 @@ package usb14.themeCourse.ee.application;
 import java.util.*;
 
 import usb14.themeCourse.ee.framework.Appliance;
+import usb14.themeCourse.ee.framework.Controller;
 import usb14.themeCourse.ee.framework.CostFunction;
 
 public class Battery extends Appliance{
@@ -24,7 +25,7 @@ public class Battery extends Appliance{
 	
 	public Battery(String name) {
 		super(name);
-		this.load = 000;
+		this.load = 0;
 		this.maxLoad = 1000;
 		this.slope = 1;
 		this.idler = 0;
@@ -34,9 +35,9 @@ public class Battery extends Appliance{
 		for(int i=-maxLoad;i<=maxLoad;i+=100) function.put(0, i);
 		super.setCostFunction(new CostFunction(function));
 		setState(getCurrentUsage());
-		//updateCostFunction();
+		updateCostFunction();
 		
-		currentPrice = 500;
+		//currentPrice = 500;
 	}
 	
 	public State getState(){
@@ -112,13 +113,17 @@ public class Battery extends Appliance{
 
 	@Override
 	public void updateState() {
-		//int t = Controller.getInstance().getIntervalDuration();
-
+		int t;
+		try{
+			t = Controller.getInstance().getIntervalDuration();
+		}catch(NullPointerException e){
+			t = 60;
+		}
 		this.updateCostFunction();
 		int usage = getCurrentUsage();
 		idler = usage == 0?idler+1:0;
 		loader = usage > 0 && loader < 1?loader+1:0;
-		load += usage;
+		load += (usage/60)*t;
 		setState(usage);
 		//slope = slope==1?0.2:slope;
 		
