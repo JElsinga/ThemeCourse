@@ -7,7 +7,7 @@ import java.util.TreeSet;
 
 public class CostFunction {
 	
-	public static final int MAX_COST = 2500;
+	public static final int MAX_COST = 1000;
 	public static final int MIN_COST = 0;
 
 	//SortedMap<DEMAND,COST>
@@ -161,9 +161,9 @@ public class CostFunction {
 	}
 	
 	public String toString(){
-		String result = "CostFunction: \n";
+		String result = "CostFunction";
 		for(java.util.Map.Entry<Integer, Integer> entry :costByDemandMap.entrySet()){
-			result = result + "Entry: "+ entry.toString() +'\n';
+			result = result + ", "+ entry.toString();
 		}
 		return result;
 	}
@@ -175,7 +175,7 @@ public class CostFunction {
 				throw new IllegalArgumentException("Demand cannot be Integer.MIN_VALUE (" + Integer.MIN_VALUE + ")");
 			}
 			if (costByDemandMap.get(demand) < MIN_COST || costByDemandMap.get(demand) > MAX_COST){
-				throw new IllegalArgumentException("Prices '"+costByDemandMap.get(demand)+"' must be between " + MIN_COST + " and " + MAX_COST);
+				throw new IllegalArgumentException("Prices '"+demand+","+costByDemandMap.get(demand)+"' must be between " + MIN_COST + " and " + MAX_COST);
 			}
 			if (costByDemandMap.get(demand) >= previousPrice){
 				throw new IllegalArgumentException("A cost function must be strictly decreasing");

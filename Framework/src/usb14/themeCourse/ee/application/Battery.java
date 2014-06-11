@@ -6,32 +6,37 @@ import usb14.themeCourse.ee.framework.Appliance;
 import usb14.themeCourse.ee.framework.CostFunction;
 
 public class Battery extends Appliance{
+	
+	public static final int DEFAULTPRICE = 600;
+	public static final int IDLEMULTIPLIER = 100;
+	public static final int LOADMULTIPLIER = 100;
+	
 	public enum State {
 		CHARGING, DISCHARGING, IDLE
 	}
-	
 	private int load;
 	private int maxLoad;
 	private State state;
 	private int currentPrice;
-	public CostFunction charge;
-	public CostFunction discharge;
 	private double slope;
 	private int idler;
+	private int loader;
 	
 	public Battery(String name) {
 		super(name);
-		this.state = state.IDLE;
-		this.load = 0;
+		this.load = 000;
 		this.maxLoad = 1000;
 		this.slope = 1;
 		this.idler = 0;
 		
 		SortedMap<Integer,Integer> function = new TreeMap<Integer,Integer>();
+		//Set everything to zero at the start.
+		for(int i=-maxLoad;i<=maxLoad;i+=100) function.put(0, i);
 		super.setCostFunction(new CostFunction(function));
-		updateCostFunction();
+		setState(getCurrentUsage());
+		//updateCostFunction();
 		
-		currentPrice = 1000;
+		currentPrice = 500;
 	}
 	
 	public State getState(){
@@ -49,20 +54,53 @@ public class Battery extends Appliance{
 	
 	private void updateCostFunction(){
 		int cost;
-		for(int demand=-maxLoad;demand<maxLoad;demand+=100){
-			//Everything before the costfunction (cannot give what you dont have)
+		for(int demand=-maxLoad;demand<=maxLoad;demand+=100){
+			//Everything before the cost function (cannot give what you dont have)
 			if(load+demand < 0)
 				getCostFunction().deleteCostForDemand(demand);
-			//Everything after the costfunction (cannot charge if full)
+			//Everything after the cost function (cannot charge if full)
 			else if(load+demand > maxLoad)
 				getCostFunction().deleteCostForDemand(demand);
-			//Everything in the costfunction (can charge/discharge so much)
+			//Don't allow the battery to actively do nothing (this stops unwanted idling)
+			else if(demand == 0)
+				getCostFunction().deleteCostForDemand(0);
+			//Everything in the cost function (can charge/discharge so much)
 			else{
-				cost = (int) (-slope*demand+(1100-(load/2)));
+				/**
+				 * This is the cost function of battery.
+				 * It is a linear strictly declining line in the form y = -ax+b
+				 * where y is cost, and x is demand.
+				 * the slope 'a' is negative to ensure decline and currently is set to -1 (in other words has on influence on the function)
+				 * 		The slope could be used to ensure loading loops are kept to a minimum
+				 * the intercept 'b' is a bit more complicated and is built up as follows:
+				 * 		b = DEFAULTPRICE - load + (idler * IDLEMULTIPLIER)
+				 * EFFECTS:
+				 * 	In general -	By changing 'b' we can raise or lower the cost per demand.
+				 * 					By raising 'b' we raise the cost meaning the battery will be willing to pay more.
+				 * 					By decreasing 'b' we lower the cost meaning the battery will not be willing to pay more.		
+				 *	var: DEFAULTPRICE -	This is the set price at which we would want to start loading the battery.
+				 *						CurrentPrice - DEFAULTPRICE = stable load of the battery (load it will idle at).
+				 *	var: load -			This is the load of the current battery.
+				 *						Multiplying load increase the time before discharge (unknown reason)
+				 *  var: loader -		This is a counter which counts how long the battery has been loading.
+				 *  var: LOADMULTIPLIER-=====================================================================
+				 *	var: idler -		This is a counter which counts how long the battery had been idle.
+				 *  var: IDLEMULTIPLIER-This is a multiplier which is used to drive cost per demand when the battery has been idle.
+				 *  					By increasing the multiplier the battery will be more likely to charge instead of being idle.
+				 *  					For this battery the multiplier had a direct correlation to how much will be charged after being idle.
+				 *						
+				 */
+				cost = (int) (-slope*demand+DEFAULTPRICE-(load)+(loader*LOADMULTIPLIER)+(idler*IDLEMULTIPLIER));
+				//These are checks to ensure that the cost per demand dus not go below or above MIN_COST or MAX_COST respectively.
+				cost = cost > CostFunction.MAX_COST?CostFunction.MAX_COST:cost;
+				cost = cost < CostFunction.MIN_COST?CostFunction.MIN_COST:cost;
+				
 				getCostFunction().updateCostForDemand(cost, demand);
+				
+				//This is needed for the class Tester.java (otherwise can be removed).
+				//currentPrice = 500;
 			}
 		}
-		
 	}
 	
 	@Override
@@ -78,11 +116,20 @@ public class Battery extends Appliance{
 
 		this.updateCostFunction();
 		int usage = getCurrentUsage();
-		idler = usage == 0?idler+1:idler;
+		idler = usage == 0?idler+1:0;
+		loader = usage > 0 && loader < 1?loader+1:0;
 		load += usage;
+		setState(usage);
+		//slope = slope==1?0.2:slope;
 		
 	}
 
+	private void setState(int usage){
+		if(usage>0) state = State.CHARGING;
+		else if(usage<0) state = State.DISCHARGING;
+		else state = State.IDLE;
+	}
+	
 	@Override
 	public int getCurrentUsage() {
 		//System.out.println(getCostFunction());
