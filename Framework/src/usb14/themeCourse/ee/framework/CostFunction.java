@@ -155,7 +155,7 @@ public class CostFunction {
 	 * This function does not have to validate because it adds nothing to costByDemandMap
 	 * @para demand		The value of the demand which has to be removed
 	 */
-	protected void deleteCostForDemand(int demand){
+	public void deleteCostForDemand(int demand){
 		if(costByDemandMap.get(demand)!=null)
 			costByDemandMap.remove(demand);
 	}
