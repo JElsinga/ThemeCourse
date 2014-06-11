@@ -58,7 +58,7 @@ public class Network extends Observable implements Controllable {
 	}
 	
 	/**
-	 * Returns a new list of the Controllables in this network.
+	 * Returns a new array of the Controllables in this network.
 	 * @return
 	 */
 	public Controllable[] getControllables(){
@@ -82,6 +82,7 @@ public class Network extends Observable implements Controllable {
 		for(Controllable controllable: children){
 			controllable.updatePrice(price);
 		}
+		setChanged();
 		notifyObservers();
 	}
 	
@@ -94,8 +95,6 @@ public class Network extends Observable implements Controllable {
 		for(Controllable controllable: children){
 			controllable.updateState();
 		}
-		
-		notifyObservers();	
 	}
 	
 	

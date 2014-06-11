@@ -1,6 +1,9 @@
-package usb14.themeCourse.ee.framework;
+package usb14.themeCourse.ee.application;
 
 import java.util.*;
+
+import usb14.themeCourse.ee.framework.Appliance;
+import usb14.themeCourse.ee.framework.CostFunction;
 
 public class Battery extends Appliance{
 	public enum State {

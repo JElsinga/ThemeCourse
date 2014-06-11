@@ -1,5 +1,6 @@
 package test;
 
+import usb14.themeCourse.ee.application.Battery;
 import usb14.themeCourse.ee.framework.*;
 
 public class Tester {

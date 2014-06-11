@@ -1,7 +1,11 @@
-package usb14.themeCourse.ee.framework;
+package usb14.themeCourse.ee.application;
 
 import java.util.SortedMap;
 import java.util.TreeMap;
+
+import usb14.themeCourse.ee.framework.Appliance;
+import usb14.themeCourse.ee.framework.Controller;
+import usb14.themeCourse.ee.framework.CostFunction;
 
 public class WashingMachine extends Appliance {
 	public enum State {

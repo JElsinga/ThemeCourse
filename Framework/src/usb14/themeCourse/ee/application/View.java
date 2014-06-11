@@ -14,11 +14,8 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import usb14.themeCourse.ee.framework.Battery;
 import usb14.themeCourse.ee.framework.Controllable;
 import usb14.themeCourse.ee.framework.Controller;
-import usb14.themeCourse.ee.framework.Fridge;
-import usb14.themeCourse.ee.framework.WashingMachine;
 import usb14.themeCourse.ee.framework.Network;
 import net.miginfocom.swing.MigLayout;
 
@@ -118,7 +115,7 @@ public class View extends JFrame implements Observer {
 		networkUsageSeries = new XYSeries("Network Usage");
 		XYSeriesCollection networkUsageData = new XYSeriesCollection(networkUsageSeries);
 		JFreeChart networkUsageChart = ChartFactory.createXYLineChart(
-				"Network Usage", "Time","Usage", batteryUsageData, PlotOrientation.VERTICAL,
+				"Network Usage", "Time","Usage", networkUsageData, PlotOrientation.VERTICAL,
 				false, false, false);
 		ChartPanel networkUsageChartPanel = new ChartPanel(networkUsageChart);
 		networkUsageChartPanel.setMaximumDrawWidth(10000);

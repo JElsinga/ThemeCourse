@@ -1,7 +1,11 @@
-package usb14.themeCourse.ee.framework;
+package usb14.themeCourse.ee.application;
 
 import java.util.SortedMap;
 import java.util.TreeMap;
+
+import usb14.themeCourse.ee.framework.Appliance;
+import usb14.themeCourse.ee.framework.Controller;
+import usb14.themeCourse.ee.framework.CostFunction;
 
 public class Fridge extends Appliance{
 	public enum State {
@@ -21,9 +25,8 @@ public class Fridge extends Appliance{
 	public Fridge(String name) {
 		super(name);
 		this.state = State.OFF;
-		this.temp = 2;
+		this.temp = 4;
 		this.time = 0;
-		this.currentPrice = 0;
 		
 		SortedMap<Integer, Integer> function = new TreeMap<Integer, Integer>();
 		function.put(usage, 0);	
@@ -50,16 +53,16 @@ public class Fridge extends Appliance{
 	// Commands
 	
 	private void updateCostFunction(){
-		int cost = 1000;
-		if(time > 0 && time < 20) cost = maxCost;
-		else if(temp >= 7.5){
+		int cost;
+		
+		if(time > 0 && time < 20) 
 			cost = maxCost;
-		} else if(temp < 2.5){ 
-			cost = 0;
-		} else{
-			
-			cost = (int) Math.round(((double)maxCost)/(8-temp));
-		}
+		else
+			// Met deze functie zou de temperatuur tussen 3 en 7 graden moeten schommelen.
+			// Bij een prijs van 500 blijkt het tussen de 4 en 5 te blijven, dus er is wat 
+			// marge om warmer of kouder te worden bij een hogere of lagere energieprijs.
+			cost = (int) Math.round(((temp-3.0)/4.0) * (float)maxCost);
+		
 		super.getCostFunction().updateCostForDemand(cost, usage);
 	}
 	

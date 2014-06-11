@@ -133,7 +133,7 @@ public class CostFunction {
 	 * 			in this cost function, or when cost is not between MIN_COST
 	 * 			and MAX_COST.
 	 */
-	protected void updateCostForDemand(int cost, int demand){
+	public void updateCostForDemand(int cost, int demand){
 		Integer oldCost = costByDemandMap.get(demand);
 		if (oldCost != null)
 			costByDemandMap.put(demand, cost);
