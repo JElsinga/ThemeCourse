@@ -8,21 +8,20 @@ public class Tester {
 	public static void main(String args[]){
 		Battery battery = new Battery("Battery");
 		
-		//battery.updateState();
-		
 		/**
 		 * Let the battery run for a bit
 		 * We assume time t = 60 minutes
 		 */
-		for(int i=0;i<24;i++){
+		for(int i=0;i<4;i++){
 			int load = battery.getLoad();
-			System.out.print("Load: "+load);
+			//System.out.print("Load: "+load);
 			battery.updateState();
-			//System.out.println(battery.getCostFunction());
+			System.out.println(battery.getCostFunction());
 			int usage = battery.getCurrentUsage();
 			System.out.println("\t Usage: "+usage);
 			//System.out.println("Expected next load: "+(load+usage));
 		}
+		
 		
 		/**
 		int i = -battery.getMaxLoad();

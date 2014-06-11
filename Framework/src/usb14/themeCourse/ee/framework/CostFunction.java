@@ -7,7 +7,7 @@ import java.util.TreeSet;
 
 public class CostFunction {
 	
-	public static final int MAX_COST = 1000;
+	public static final int MAX_COST = 2500;
 	public static final int MIN_COST = 0;
 
 	//SortedMap<DEMAND,COST>
@@ -129,16 +129,13 @@ public class CostFunction {
 	 * Updates the cost for a given demand.
 	 * @param cost		The new cost associated by the given demand 
 	 * @param demand	The demand
-	 * @throws 	IllegalArgumentException when the given demand does not exist
-	 * 			in this cost function, or when cost is not between MIN_COST
+	 * @throws 	IllegalArgumentException when cost is not between MIN_COST
 	 * 			and MAX_COST.
 	 */
 	public void updateCostForDemand(int cost, int demand){
 		Integer oldCost = costByDemandMap.get(demand);
-		if (oldCost != null)
-			costByDemandMap.put(demand, cost);
-		else
-			throw new IllegalArgumentException("The given demand does not exist in the cost function.");
+		costByDemandMap.put(demand, cost);
+		//throw new IllegalArgumentException("The given demand does not exist in the cost function.");
 		try
 		{
 			validate(costByDemandMap);
@@ -146,16 +143,27 @@ public class CostFunction {
 		catch (Exception e)
 		{
 			// Restore state
-			costByDemandMap.put(demand, oldCost);
+			if(oldCost!=null)
+				costByDemandMap.put(demand, oldCost);
 			// Rethrow exception
 			throw e;
 		}
 	}
 	
+	/**
+	 * Removes a demand (and indirectly its cost) from the cost function
+	 * This function does not have to validate because it adds nothing to costByDemandMap
+	 * @para demand		The value of the demand which has to be removed
+	 */
+	protected void deleteCostForDemand(int demand){
+		if(costByDemandMap.get(demand)!=null)
+			costByDemandMap.remove(demand);
+	}
+	
 	public String toString(){
-		String result = "";
+		String result = "CostFunction: \n";
 		for(java.util.Map.Entry<Integer, Integer> entry :costByDemandMap.entrySet()){
-			result = result + "\t Entry: "+ entry.toString();
+			result = result + "Entry: "+ entry.toString() +'\n';
 		}
 		return result;
 	}
@@ -167,7 +175,7 @@ public class CostFunction {
 				throw new IllegalArgumentException("Demand cannot be Integer.MIN_VALUE (" + Integer.MIN_VALUE + ")");
 			}
 			if (costByDemandMap.get(demand) < MIN_COST || costByDemandMap.get(demand) > MAX_COST){
-				throw new IllegalArgumentException("Prices must be between " + MIN_COST + " and " + MAX_COST);
+				throw new IllegalArgumentException("Prices '"+costByDemandMap.get(demand)+"' must be between " + MIN_COST + " and " + MAX_COST);
 			}
 			if (costByDemandMap.get(demand) >= previousPrice){
 				throw new IllegalArgumentException("A cost function must be strictly decreasing");
