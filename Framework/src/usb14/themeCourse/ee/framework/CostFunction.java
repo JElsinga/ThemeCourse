@@ -58,29 +58,28 @@ public class CostFunction {
 	/**
 	 * Gets the cost associated with a given demand
 	 * @param demand	The given demand
-	 * @return			The cost associated with the demand,
-	 * 					returns MAX_COST + 1 if all demands in the cost
-	 * 					function are higher than the given demand or 0
-	 * 					when the demand is higher than any demand in the
-	 * 					cost function. 
+	 * @return			The cost associated with the demand
 	 */
 	public int getCostByDemand(int demand) {
 		int result = 0;
 		if(costByDemandMap.containsKey(demand)){
 			result = costByDemandMap.get(demand);
 		} else {
-			int previous = Integer.MIN_VALUE;
-			for(int dem : getDemands()){
-				if(dem > demand){
-					if (previous == Integer.MIN_VALUE)
-						result = MAX_COST + 1;
-					else
-						result = costByDemandMap.get(previous);
+			int[] demands = getDemands();
+			int i = 0;
+			while(i < demands.length){
+				if(demands[i] < 0 && demands[i] > demand){
+					result = costByDemandMap.get(demands[i]);
 					break;
-				}else{
-					previous = dem;
 				}
+				if (demands[i] > 0 && demands[i] > demand){
+					result = costByDemandMap.get(demands[i-1]);
+					break;
+				}
+				i++;
 			}
+			if(i == demands.length)
+				result = costByDemandMap.get(demands[i-1]);
 		}
 		return result;
 	}
@@ -91,13 +90,29 @@ public class CostFunction {
 	 * @return		The demand associated with the cost
 	 */
 	public int getDemandByCost(int cost) {
-		int viable = 0;
-		for(int dem : getDemands()){	// kijk per demand of de cost groter of gelijk is aan cost
-			if(costByDemandMap.get(dem) >= cost){
-				viable = dem;
+		int result = 0;
+		int[] demands = getDemands();
+		
+		int i = 0;
+		while(i < demands.length){	// kijk per demand of de cost groter of gelijk is aan cost
+			if (costByDemandMap.get(demands[i]) == cost){
+				result = demands[i];
+				break;
 			}
+			if(demands[i] < 0 && costByDemandMap.get(demands[i]) < cost){
+				result = demands[i];
+				break;
+			}
+			if(demands[i] > 0 && costByDemandMap.get(demands[i]) < cost){
+				result = demands[i-1];
+				break;
+			}
+			i++;
 		}
-		return viable;
+		if (i == demands.length)
+			result = demands[i - 1];
+		
+		return result;
 	}
 	
 	/**
@@ -132,7 +147,7 @@ public class CostFunction {
 	 * @throws 	IllegalArgumentException when cost is not between MIN_COST
 	 * 			and MAX_COST.
 	 */
-	public void updateCostForDemand(int cost, int demand){
+	public void updateCostForDemand(int cost, int demand) throws IllegalArgumentException{
 		Integer oldCost = costByDemandMap.get(demand);
 		costByDemandMap.put(demand, cost);
 		//throw new IllegalArgumentException("The given demand does not exist in the cost function.");
@@ -180,6 +195,7 @@ public class CostFunction {
 			if (costByDemandMap.get(demand) >= previousPrice){
 				throw new IllegalArgumentException("A cost function must be strictly decreasing");
 			}
+			previousPrice = costByDemandMap.get(demand);
 		}
 	}
 }

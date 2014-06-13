@@ -29,6 +29,7 @@ public class Fridge extends Appliance{
 		this.time = 0;
 		
 		SortedMap<Integer, Integer> function = new TreeMap<Integer, Integer>();
+		function.put(0, CostFunction.MAX_COST);
 		function.put(usage, 0);	
 		super.setCostFunction(new CostFunction(function));
 	}
@@ -62,6 +63,7 @@ public class Fridge extends Appliance{
 			// Bij een prijs van 500 blijkt het tussen de 4 en 5 te blijven, dus er is wat 
 			// marge om warmer of kouder te worden bij een hogere of lagere energieprijs.
 			cost = (int) Math.round(((temp-3.0)/4.0) * (float)maxCost);
+		if (cost < 0 ) cost = 0;
 		
 		super.getCostFunction().updateCostForDemand(cost, usage);
 	}

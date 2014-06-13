@@ -1,5 +1,7 @@
 package usb14.themeCourse.ee.framework;
 
+import java.util.Random;
+
 public class Controller extends Thread{
 
 	private static Controller instance;
@@ -57,9 +59,9 @@ public class Controller extends Thread{
 	
 	public void run() {
 		int price = 500;
-		
-		//while(this.time <= 24){
 		while(this.time < 1440) {
+			
+			
 			controllable.updatePrice(price);
 			
 			try {
