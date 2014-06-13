@@ -56,15 +56,18 @@ public class Battery extends Appliance{
 	private void updateCostFunction(){
 		int cost;
 		for(int demand=-maxLoad;demand<=maxLoad;demand+=100){
-			//Everything before the cost function (cannot give what you dont have)
+			//Everything before the cost function (cannot give what you don't have)
 			if(load+demand < 0)
 				getCostFunction().deleteCostForDemand(demand);
 			//Everything after the cost function (cannot charge if full)
 			else if(load+demand > maxLoad)
 				getCostFunction().deleteCostForDemand(demand);
 			//Don't allow the battery to actively do nothing (this stops unwanted idling)
+			/**
+			*This is now turned off so we get Zero Demand
 			else if(demand == 0)
 				getCostFunction().deleteCostForDemand(0);
+			*/
 			//Everything in the cost function (can charge/discharge so much)
 			else{
 				/**
@@ -92,16 +95,19 @@ public class Battery extends Appliance{
 				 *						
 				 */
 				cost = (int) (-slope*demand+DEFAULTPRICE-(load)+(loader*LOADMULTIPLIER)+(idler*IDLEMULTIPLIER));
-				//These are checks to ensure that the cost per demand dus not go below or above MIN_COST or MAX_COST respectively.
-				cost = cost > CostFunction.MAX_COST?CostFunction.MAX_COST:cost;
-				cost = cost < CostFunction.MIN_COST?CostFunction.MIN_COST:cost;
+				//These are checks to ensure that the cost per demand does not go below or above MIN_COST or MAX_COST respectively.
+				if(CostFunction.MIN_COST <= cost && cost <= CostFunction.MAX_COST)
+					getCostFunction().updateCostForDemand(cost, demand);
 				
-				getCostFunction().updateCostForDemand(cost, demand);
+				//cost = cost > CostFunction.MAX_COST?CostFunction.MAX_COST:cost;
+				//cost = cost < CostFunction.MIN_COST?CostFunction.MIN_COST:cost;
+
 				
 				//This is needed for the class Tester.java (otherwise can be removed).
 				//currentPrice = 500;
 			}
 		}
+		System.out.println(getCostFunction());
 	}
 	
 	@Override
@@ -123,7 +129,7 @@ public class Battery extends Appliance{
 		int usage = getCurrentUsage();
 		idler = usage == 0?idler+1:0;
 		loader = usage > 0 && loader < 1?loader+1:0;
-		load += (usage/60)*t;
+		load += (int) Math.round(((double)usage/60.0)*(double)t);
 		setState(usage);
 		//slope = slope==1?0.2:slope;
 		
