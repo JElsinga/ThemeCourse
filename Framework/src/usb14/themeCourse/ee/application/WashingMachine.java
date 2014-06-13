@@ -31,6 +31,7 @@ public class WashingMachine extends Appliance {
 		this.remainingTime = 120;
 		
 		SortedMap<Integer, Integer> function = new TreeMap<Integer, Integer>();
+		function.put(0, CostFunction.MAX_COST);
 		function.put(demand, 0);
 		super.setCostFunction(new CostFunction(function));
 	}
