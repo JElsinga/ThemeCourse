@@ -55,21 +55,9 @@ public class Battery extends Appliance{
 	
 	private void updateCostFunction(){
 		int cost;
+		SortedMap<Integer,Integer> newFunction = new TreeMap<Integer,Integer>();
 		for(int demand=-maxLoad;demand<=maxLoad;demand+=100){
-			//Everything before the cost function (cannot give what you don't have)
-			if(load+demand < 0)
-				getCostFunction().deleteCostForDemand(demand);
-			//Everything after the cost function (cannot charge if full)
-			else if(load+demand > maxLoad)
-				getCostFunction().deleteCostForDemand(demand);
-			//Don't allow the battery to actively do nothing (this stops unwanted idling)
-			/**
-			*This is now turned off so we get Zero Demand
-			else if(demand == 0)
-				getCostFunction().deleteCostForDemand(0);
-			*/
-			//Everything in the cost function (can charge/discharge so much)
-			else{
+			if(0 <= load+demand && load+demand <= maxLoad){
 				/**
 				 * This is the cost function of battery.
 				 * It is a linear strictly declining line in the form y = -ax+b
@@ -96,18 +84,14 @@ public class Battery extends Appliance{
 				 */
 				cost = (int) (-slope*demand+DEFAULTPRICE-(load)+(loader*LOADMULTIPLIER)+(idler*IDLEMULTIPLIER));
 				//These are checks to ensure that the cost per demand does not go below or above MIN_COST or MAX_COST respectively.
-				if(CostFunction.MIN_COST <= cost && cost <= CostFunction.MAX_COST)
-					getCostFunction().updateCostForDemand(cost, demand);
-				
-				//cost = cost > CostFunction.MAX_COST?CostFunction.MAX_COST:cost;
-				//cost = cost < CostFunction.MIN_COST?CostFunction.MIN_COST:cost;
-
-				
-				//This is needed for the class Tester.java (otherwise can be removed).
-				//currentPrice = 500;
+				if(CostFunction.MIN_COST <= cost && cost <= CostFunction.MAX_COST){
+					//System.out.println("Adding: Demand: "+demand+", Cost: "+cost);
+					newFunction.put(demand, cost);
+				}
 			}
 		}
-		System.out.println(getCostFunction());
+		setCostFunction(new CostFunction(newFunction));
+		//System.out.println(getCostFunction());
 	}
 	
 	@Override
