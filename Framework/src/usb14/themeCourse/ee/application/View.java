@@ -38,7 +38,7 @@ public class View extends JFrame implements Observer {
 	
 	private Battery battery;
 	private XYSeries batteryUsageSeries;
-	private XYSeries batteryLoadSeries;
+	private XYSeries batteryChargeSeries;
 	
 	private Network network;
 	private XYSeries networkUsageSeries;
@@ -113,14 +113,14 @@ public class View extends JFrame implements Observer {
 		ChartPanel batteryUsageChartPanel = new ChartPanel(batteryUsageChart);
 		batteryUsageChartPanel.setMaximumDrawWidth(10000);
 		
-		// Battery Load Plot
-		batteryLoadSeries = new XYSeries("Battery Load");
-		XYSeriesCollection batteryLoadData = new XYSeriesCollection(batteryLoadSeries);
-		JFreeChart batteryLoadChart = ChartFactory.createXYLineChart(
-				"Battery Load", "Time","Load", batteryLoadData, PlotOrientation.VERTICAL,
+		// Battery Charge Plot
+		batteryChargeSeries = new XYSeries("Battery Charge");
+		XYSeriesCollection batteryLoadData = new XYSeriesCollection(batteryChargeSeries);
+		JFreeChart batteryChargeChart = ChartFactory.createXYLineChart(
+				"Battery Charge", "Time","Charge", batteryLoadData, PlotOrientation.VERTICAL,
 				false, false, false);
-		ChartPanel batteryLoadChartPanel = new ChartPanel(batteryLoadChart);
-		batteryUsageChartPanel.setMaximumDrawWidth(10000);
+		ChartPanel batteryChargeChartPanel = new ChartPanel(batteryChargeChart);
+		batteryChargeChartPanel.setMaximumDrawWidth(10000);
 		
 		// Network Usage Plot
 		networkUsageSeries = new XYSeries("Network Usage");
@@ -131,11 +131,11 @@ public class View extends JFrame implements Observer {
 		ChartPanel networkUsageChartPanel = new ChartPanel(networkUsageChart);
 		networkUsageChartPanel.setMaximumDrawWidth(10000);
 		
+		this.add(washerUsageChartPanel, "growx");
 		this.add(fridgeUsageChartPanel, "growx");
 		this.add(fridgeTemperatureChartPanel, "growx");
-		this.add(washerUsageChartPanel, "growx");
 		this.add(batteryUsageChartPanel, "growx");
-		this.add(batteryLoadChartPanel, "growx");
+		this.add(batteryChargeChartPanel, "growx");
 		this.add(networkUsageChartPanel, "growx");
 		
 		this.setSize(750, 750);
@@ -164,7 +164,7 @@ public class View extends JFrame implements Observer {
 			if(lastUsageByControllable.containsKey(battery))
 				batteryUsageSeries.add(time, lastUsageByControllable.get(battery));
 			batteryUsageSeries.add(time, battery.getCurrentUsage());
-			batteryLoadSeries.add(time, battery.getLoad());
+			batteryChargeSeries.add(time, battery.getLoad());
 			
 			lastUsageByControllable.put(battery, battery.getCurrentUsage());
 		}

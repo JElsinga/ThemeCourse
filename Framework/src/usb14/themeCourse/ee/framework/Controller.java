@@ -1,7 +1,5 @@
 package usb14.themeCourse.ee.framework;
 
-import java.util.Random;
-
 public class Controller extends Thread{
 
 	private static Controller instance;
@@ -59,9 +57,19 @@ public class Controller extends Thread{
 	
 	public void run() {
 		int price = 500;
+		int demand = 200;
 		while(this.time < 1440) {
+			System.out.println(controllable.getCostFunction());
+			price = controllable.getCostFunction().getCostByDemand(demand);
 			
+			while(price == 0){
+				demand += 50;
+				price = controllable.getCostFunction().getCostByDemand(demand);
+			}
+			demand = 200;
+				
 			
+			System.out.println(price);
 			controllable.updatePrice(price);
 			
 			try {

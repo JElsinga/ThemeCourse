@@ -16,7 +16,7 @@ public class Fridge extends Appliance{
 	private double temp;
 	private int time;
 	private int currentPrice;
-	private final int usage = 280;
+	private final int usage = 200;
 	private final int maxCost = CostFunction.MAX_COST;
 
 	// Constructor
@@ -29,9 +29,9 @@ public class Fridge extends Appliance{
 		this.time = 0;
 		
 		SortedMap<Integer, Integer> function = new TreeMap<Integer, Integer>();
-		function.put(0, CostFunction.MAX_COST);
-		function.put(usage, 0);	
+		function.put(usage, 0);
 		super.setCostFunction(new CostFunction(function));
+		updateCostFunction();
 	}
 	
 	

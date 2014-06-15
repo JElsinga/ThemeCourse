@@ -61,7 +61,7 @@ public class CostFunction {
 	 * @return			The cost associated with the demand
 	 */
 	public int getCostByDemand(int demand) {
-		int result = 0;
+		int result = CostFunction.MAX_COST;
 		if(costByDemandMap.containsKey(demand)){
 			result = costByDemandMap.get(demand);
 		} else {
@@ -73,7 +73,8 @@ public class CostFunction {
 					break;
 				}
 				if (demands[i] > 0 && demands[i] > demand){
-					result = costByDemandMap.get(demands[i-1]);
+					if (i > 0)
+						result = costByDemandMap.get(demands[i-1]);
 					break;
 				}
 				i++;
@@ -104,7 +105,8 @@ public class CostFunction {
 				break;
 			}
 			if(demands[i] > 0 && costByDemandMap.get(demands[i]) < cost){
-				result = demands[i-1];
+				if (i > 0)
+					result = demands[i-1];
 				break;
 			}
 			i++;

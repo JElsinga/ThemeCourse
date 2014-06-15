@@ -8,15 +8,15 @@ import usb14.themeCourse.ee.framework.CostFunction;
 
 public class Battery extends Appliance{
 	
-	public static final int DEFAULTPRICE = 600;
-	public static final int IDLEMULTIPLIER = 100;
-	public static final int LOADMULTIPLIER = 100;
+	public static final int DEFAULTPRICE = 500;
+	public static final int IDLEMULTIPLIER = 0;//100;
+	public static final int LOADMULTIPLIER = 0;
 	
 	public enum State {
 		CHARGING, DISCHARGING, IDLE
 	}
-	private int load;
-	private int maxLoad;
+	private int charge;
+	private int maxCharge;
 	private State state;
 	private int currentPrice;
 	private double slope;
@@ -25,14 +25,14 @@ public class Battery extends Appliance{
 	
 	public Battery(String name) {
 		super(name);
-		this.load = 0;
-		this.maxLoad = 1000;
+		this.charge = 0;
+		this.maxCharge = 1000;
 		this.slope = 1;
 		this.idler = 0;
 		
 		SortedMap<Integer,Integer> function = new TreeMap<Integer,Integer>();
 		//Set everything to zero at the start.
-		for(int i=-maxLoad;i<=maxLoad;i+=100) function.put(0, i);
+		for(int i=-maxCharge;i<=maxCharge;i+=100) function.put(0, i);
 		super.setCostFunction(new CostFunction(function));
 		setState(getCurrentUsage());
 		updateCostFunction();
@@ -45,19 +45,19 @@ public class Battery extends Appliance{
 	}
 	
 	public int getLoad(){
-		return this.load;
+		return this.charge;
 	}
 	
-	public int getMaxLoad(){
-		return this.maxLoad;
+	public int getMaxCharage(){
+		return this.maxCharge;
 	}
 	
 	
 	private void updateCostFunction(){
 		int cost;
 		SortedMap<Integer,Integer> newFunction = new TreeMap<Integer,Integer>();
-		for(int demand=-maxLoad;demand<=maxLoad;demand+=100){
-			if(0 <= load+demand && load+demand <= maxLoad){
+		for(int demand=-maxCharge;demand<=maxCharge;demand+=100){
+			if(0 <= charge+demand && charge+demand <= maxCharge){
 				/**
 				 * This is the cost function of battery.
 				 * It is a linear strictly declining line in the form y = -ax+b
@@ -82,16 +82,28 @@ public class Battery extends Appliance{
 				 *  					For this battery the multiplier had a direct correlation to how much will be charged after being idle.
 				 *						
 				 */
-				cost = (int) (-slope*demand+DEFAULTPRICE-(load)+(loader*LOADMULTIPLIER)+(idler*IDLEMULTIPLIER));
+				cost = (int) (-slope*demand+DEFAULTPRICE-(charge)+(loader*LOADMULTIPLIER)+(idler*IDLEMULTIPLIER));
 				//These are checks to ensure that the cost per demand does not go below or above MIN_COST or MAX_COST respectively.
-				if(CostFunction.MIN_COST <= cost && cost <= CostFunction.MAX_COST){
-					//System.out.println("Adding: Demand: "+demand+", Cost: "+cost);
-					newFunction.put(demand, cost);
-				}
+				//System.out.println("Adding: Demand: "+demand+", Cost: "+cost);
+				newFunction.put(demand, cost);
+				
 			}
 		}
-		setCostFunction(new CostFunction(newFunction));
+		setCostFunction(new CostFunction(mapTo(newFunction)));
 		//System.out.println(getCostFunction());
+	}
+	
+	private SortedMap<Integer, Integer> mapTo(SortedMap<Integer, Integer> function){
+		SortedMap<Integer, Integer> newMap = new TreeMap<Integer, Integer>();
+		int lowest = function.get(function.lastKey());
+		for (int demand : function.keySet()){
+			newMap.put(demand, function.get(demand) - lowest);
+		}
+		double fraction = (double)(CostFunction.MAX_COST) / (double)newMap.get(newMap.firstKey());
+		for (int demand : function.keySet()){
+			newMap.put(demand, (int)Math.round((double)newMap.get(demand) * fraction));
+		}
+		return newMap;
 	}
 	
 	@Override
@@ -109,12 +121,14 @@ public class Battery extends Appliance{
 		}catch(NullPointerException e){
 			t = 60;
 		}
-		this.updateCostFunction();
+		
 		int usage = getCurrentUsage();
 		idler = usage == 0?idler+1:0;
 		loader = usage > 0 && loader < 1?loader+1:0;
-		load += (int) Math.round(((double)usage/60.0)*(double)t);
+		charge += (int) Math.round(((double)usage/60.0)*(double)t);
 		setState(usage);
+		
+		this.updateCostFunction();
 		//slope = slope==1?0.2:slope;
 		
 	}

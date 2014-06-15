@@ -14,7 +14,7 @@ public class WashingMachine extends Appliance {
 	
 	private final int startInterval = 14 * 60;
 	private final int endInterval = 17 * 60;
-	private final int demand = 120;
+	private final int demand = 100;
 	private final int preferredCost = 450;
 	
 	private State state;
@@ -31,7 +31,6 @@ public class WashingMachine extends Appliance {
 		this.remainingTime = 120;
 		
 		SortedMap<Integer, Integer> function = new TreeMap<Integer, Integer>();
-		function.put(0, CostFunction.MAX_COST);
 		function.put(demand, 0);
 		super.setCostFunction(new CostFunction(function));
 	}
@@ -46,6 +45,7 @@ public class WashingMachine extends Appliance {
 		else {
 			this.state = State.ON;
 			hasStarted = true;
+			System.out.println("WASMACHINE AAN");
 		}
 		
 		setChanged();
@@ -55,6 +55,7 @@ public class WashingMachine extends Appliance {
 	@Override
 	public void updateState() {
 		int currentTime = Controller.getInstance().getTime();
+		int cost = 0;
 		
 		/* This washing machine will only start washing between 2 pm and 5 pm
 		 * and will take 2 hours to finish.
@@ -65,16 +66,15 @@ public class WashingMachine extends Appliance {
 		
 		if (hasFinished || currentTime < startInterval)
 			// If done washing, or not time to wash yet, don't pay anything.
-			super.getCostFunction().updateCostForDemand(0, demand);
-		else if (!hasStarted && currentTime < endInterval) {
+			cost = 0;
+		else if (!hasStarted && currentTime < endInterval)
 			// If not started, but time to start watching, set price depending on how late it is
-			int cost = preferredCost + (CostFunction.MAX_COST - preferredCost) * (currentTime - startInterval) / (endInterval - startInterval);
-			super.getCostFunction().updateCostForDemand(cost, demand);
-		}
+			cost = preferredCost + (CostFunction.MAX_COST - preferredCost) * (currentTime - startInterval) / (endInterval - startInterval);
 		else
 			// If already started, or we really need to start washing, set to our maximum price
-			super.getCostFunction().updateCostForDemand(CostFunction.MAX_COST, demand);
+			cost = CostFunction.MAX_COST;
 		
+		super.getCostFunction().updateCostForDemand(cost, demand);
 	}
 
 	@Override
