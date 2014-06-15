@@ -8,9 +8,9 @@ import usb14.themeCourse.ee.framework.CostFunction;
 
 public class Battery extends Appliance{
 	
-	public static final int DEFAULTPRICE = 500;
-	public static final int IDLEMULTIPLIER = 0;//100;
-	public static final int LOADMULTIPLIER = 0;
+	public static final int DEFAULTPRICE = 1000;
+	public static final int IDLEMULTIPLIER = 500;
+	public static final int LOADMULTIPLIER = 500;
 	
 	public enum State {
 		CHARGING, DISCHARGING, IDLE
@@ -27,7 +27,7 @@ public class Battery extends Appliance{
 		super(name);
 		this.charge = 0;
 		this.maxCharge = 1000;
-		this.slope = 1;
+		this.slope = 2;
 		this.idler = 0;
 		
 		SortedMap<Integer,Integer> function = new TreeMap<Integer,Integer>();
@@ -44,7 +44,7 @@ public class Battery extends Appliance{
 		return this.state;
 	}
 	
-	public int getLoad(){
+	public int getCharge(){
 		return this.charge;
 	}
 	
@@ -89,8 +89,39 @@ public class Battery extends Appliance{
 				
 			}
 		}
-		setCostFunction(new CostFunction(mapTo(newFunction)));
-		//System.out.println(getCostFunction());
+		SortedMap<Integer, Integer> newMap = mapToV2(newFunction);
+		//setCostFunction(new CostFunction(mapTo(newFunction)));
+		setCostFunction(new CostFunction(newMap));
+		//System.out.println("Load: "+charge);
+		//System.out.println("Battery: "+getCostFunction());
+	}
+	
+	private SortedMap<Integer, Integer> mapToV2(SortedMap<Integer, Integer> function){
+		SortedMap<Integer, Integer> newMap = new TreeMap<Integer, Integer>();
+		Iterator it = function.keySet().iterator();
+		boolean below = false;
+		int previous = 0;
+		while(it.hasNext() & !below){
+			int demand = (int) it.next();
+			int cost = function.get(demand);
+			//System.out.println("From - Demand: "+demand+" Cost: "+cost);
+			if(cost >= CostFunction.MAX_COST && function.get(previous) >= CostFunction.MAX_COST){
+				newMap.remove(previous);
+				newMap.put(demand, CostFunction.MAX_COST);
+			}else if(cost >= CostFunction.MAX_COST){
+				newMap.put(demand, CostFunction.MAX_COST);
+			}else if(cost <= CostFunction.MIN_COST & !below){
+				newMap.put(demand, CostFunction.MIN_COST);
+				below = true;
+			}else if(!below){
+				newMap.put(demand,cost);
+			}
+			previous = demand;
+		}
+		for(int dem : newMap.keySet()){
+			//System.out.println("To - Demand: "+dem+" Cost: "+newMap.get(dem));
+		}
+		return newMap;
 	}
 	
 	private SortedMap<Integer, Integer> mapTo(SortedMap<Integer, Integer> function){

@@ -164,7 +164,7 @@ public class View extends JFrame implements Observer {
 			if(lastUsageByControllable.containsKey(battery))
 				batteryUsageSeries.add(time, lastUsageByControllable.get(battery));
 			batteryUsageSeries.add(time, battery.getCurrentUsage());
-			batteryChargeSeries.add(time, battery.getLoad());
+			batteryChargeSeries.add(time, battery.getCharge());
 			
 			lastUsageByControllable.put(battery, battery.getCurrentUsage());
 		}
@@ -174,6 +174,7 @@ public class View extends JFrame implements Observer {
 			networkUsageSeries.add(time, network.getCurrentUsage());
 			
 			lastUsageByControllable.put(network, network.getCurrentUsage());
+			
 		}
 	}
 

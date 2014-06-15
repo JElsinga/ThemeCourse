@@ -56,29 +56,32 @@ public class Controller extends Thread{
 	// Commands
 	
 	public void run() {
+		double difference = 0.0;
+		
 		int price = 500;
-		int demand = 200;
+		int demand = 100;
 		while(this.time < 1440) {
-			System.out.println(controllable.getCostFunction());
+			//System.out.println("Nework: "+controllable.getCostFunction());
 			price = controllable.getCostFunction().getCostByDemand(demand);
 			
 			while(price == 0){
 				demand += 50;
 				price = controllable.getCostFunction().getCostByDemand(demand);
 			}
-			demand = 200;
-				
+			demand = 100;
 			
-			System.out.println(price);
+			//System.out.println(price);
 			controllable.updatePrice(price);
 			
+			difference += Math.abs(demand-Math.abs(controllable.getCurrentUsage()));
 			try {
-				sleep(50);
+				sleep(1);
 			} catch (InterruptedException e) {}
 			
 			controllable.updateState();
 			this.time+=interval;
 		}
+		System.out.println("Total Difference: "+difference);
 	}
 	
 	
