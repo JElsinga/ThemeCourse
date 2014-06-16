@@ -89,9 +89,9 @@ public class Battery extends Appliance{
 				
 			}
 		}
-		SortedMap<Integer, Integer> newMap = mapToV2(newFunction);
+
 		//setCostFunction(new CostFunction(mapTo(newFunction)));
-		setCostFunction(new CostFunction(newMap));
+		setCostFunction(new CostFunction(mapToV2(newFunction)));
 		//System.out.println("Load: "+charge);
 		//System.out.println("Battery: "+getCostFunction());
 	}
@@ -105,21 +105,18 @@ public class Battery extends Appliance{
 			int demand = (int) it.next();
 			int cost = function.get(demand);
 			//System.out.println("From - Demand: "+demand+" Cost: "+cost);
-			if(cost >= CostFunction.MAX_COST && function.get(previous) >= CostFunction.MAX_COST){
+			if (cost >= CostFunction.MAX_COST && function.get(previous) >= CostFunction.MAX_COST){
 				newMap.remove(previous);
 				newMap.put(demand, CostFunction.MAX_COST);
-			}else if(cost >= CostFunction.MAX_COST){
+			} else if(cost >= CostFunction.MAX_COST){
 				newMap.put(demand, CostFunction.MAX_COST);
-			}else if(cost <= CostFunction.MIN_COST & !below){
+			} else if(cost <= CostFunction.MIN_COST & !below){
 				newMap.put(demand, CostFunction.MIN_COST);
 				below = true;
-			}else if(!below){
+			} else if(!below){
 				newMap.put(demand,cost);
 			}
 			previous = demand;
-		}
-		for(int dem : newMap.keySet()){
-			//System.out.println("To - Demand: "+dem+" Cost: "+newMap.get(dem));
 		}
 		return newMap;
 	}

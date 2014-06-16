@@ -14,9 +14,7 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import usb14.themeCourse.ee.framework.Controllable;
-import usb14.themeCourse.ee.framework.Controller;
-import usb14.themeCourse.ee.framework.Network;
+import usb14.themeCourse.ee.framework.*;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -36,7 +34,7 @@ public class View extends JFrame implements Observer {
 	private WashingMachine washer;
 	private XYSeries washerUsageSeries;
 	
-	private Battery battery;
+	private Battery2 battery;
 	private XYSeries batteryUsageSeries;
 	private XYSeries batteryChargeSeries;
 	
@@ -55,7 +53,7 @@ public class View extends JFrame implements Observer {
 		washer = new WashingMachine("Mega Washer 1000");
 		washer.addObserver(this);
 		
-		battery = new Battery("Battery");
+		battery = new Battery2("Battery");
 		battery.addObserver(this);
 		
 		network = new Network();

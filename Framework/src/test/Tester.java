@@ -24,7 +24,7 @@ public class Tester {
 		 * We assume time t = 60 minutes
 		 */
 		for(int i=0;i<24;i++){
-			int load = battery.getLoad();
+			int load = battery.getCharge();
 			//System.out.println("\t\t Load: "+load);
 			battery.updateState();
 			//System.out.println(battery.getCostFunction());

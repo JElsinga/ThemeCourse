@@ -45,7 +45,6 @@ public class WashingMachine extends Appliance {
 		else {
 			this.state = State.ON;
 			hasStarted = true;
-			System.out.println("WASMACHINE AAN");
 		}
 		
 		setChanged();

@@ -59,16 +59,16 @@ public class Controller extends Thread{
 		double difference = 0.0;
 		
 		int price = 500;
-		int demand = 100;
 		while(this.time < 1440) {
-			//System.out.println("Nework: "+controllable.getCostFunction());
-			price = controllable.getCostFunction().getCostByDemand(demand);
+			//System.out.println("Network: "+controllable.getCostFunction());
+			int demand = 100;
 			
+			price = controllable.getCostFunction().getCostByDemand(demand);
 			while(price == 0){
 				demand += 50;
 				price = controllable.getCostFunction().getCostByDemand(demand);
 			}
-			demand = 100;
+			
 			
 			//System.out.println(price);
 			controllable.updatePrice(price);
