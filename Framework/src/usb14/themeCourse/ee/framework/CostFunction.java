@@ -185,6 +185,7 @@ public class CostFunction {
 		return result;
 	}
 	
+	// Niet de mooiste manier om te valideren, wel de makkelijkste
 	private void validate(SortedMap<Integer, Integer> costByDemandMap){
 		int previousPrice = MAX_COST + 1;
 		for(int demand:costByDemandMap.keySet()){

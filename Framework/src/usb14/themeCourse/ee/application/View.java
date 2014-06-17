@@ -34,7 +34,7 @@ public class View extends JFrame implements Observer {
 	private WashingMachine washer;
 	private XYSeries washerUsageSeries;
 	
-	private Battery2 battery;
+	private Battery battery;
 	private XYSeries batteryUsageSeries;
 	private XYSeries batteryChargeSeries;
 	
@@ -53,7 +53,7 @@ public class View extends JFrame implements Observer {
 		washer = new WashingMachine("Mega Washer 1000");
 		washer.addObserver(this);
 		
-		battery = new Battery2("Battery");
+		battery = new Battery("Battery");
 		battery.addObserver(this);
 		
 		network = new Network();

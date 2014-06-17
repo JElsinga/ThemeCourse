@@ -8,10 +8,6 @@ import usb14.themeCourse.ee.framework.CostFunction;
 
 public class Battery extends Appliance{
 	
-	public static final int DEFAULTPRICE = 1000;
-	public static final int IDLEMULTIPLIER = 500;
-	public static final int LOADMULTIPLIER = 500;
-	
 	public enum State {
 		CHARGING, DISCHARGING, IDLE
 	}
@@ -19,25 +15,13 @@ public class Battery extends Appliance{
 	private int maxCharge;
 	private State state;
 	private int currentPrice;
-	private double slope;
-	private int idler;
-	private int loader;
 	
 	public Battery(String name) {
 		super(name);
 		this.charge = 0;
 		this.maxCharge = 1000;
-		this.slope = 2;
-		this.idler = 0;
 		
-		SortedMap<Integer,Integer> function = new TreeMap<Integer,Integer>();
-		//Set everything to zero at the start.
-		for(int i=-maxCharge;i<=maxCharge;i+=100) function.put(0, i);
-		super.setCostFunction(new CostFunction(function));
-		setState(getCurrentUsage());
 		updateCostFunction();
-		
-		//currentPrice = 500;
 	}
 	
 	public State getState(){
@@ -48,88 +32,47 @@ public class Battery extends Appliance{
 		return this.charge;
 	}
 	
-	public int getMaxCharage(){
+	public int getMaxCharge(){
 		return this.maxCharge;
 	}
 	
 	
 	private void updateCostFunction(){
-		int cost;
 		SortedMap<Integer,Integer> newFunction = new TreeMap<Integer,Integer>();
-		for(int demand=-maxCharge;demand<=maxCharge;demand+=100){
+		for(int demand=-maxCharge;demand<=maxCharge;demand+=10){
 			if(0 <= charge+demand && charge+demand <= maxCharge){
-				/**
-				 * This is the cost function of battery.
-				 * It is a linear strictly declining line in the form y = -ax+b
-				 * where y is cost, and x is demand.
-				 * the slope 'a' is negative to ensure decline and currently is set to -1 (in other words has on influence on the function)
-				 * 		The slope could be used to ensure loading loops are kept to a minimum
-				 * the intercept 'b' is a bit more complicated and is built up as follows:
-				 * 		b = DEFAULTPRICE - load + (idler * IDLEMULTIPLIER)
-				 * EFFECTS:
-				 * 	In general -	By changing 'b' we can raise or lower the cost per demand.
-				 * 					By raising 'b' we raise the cost meaning the battery will be willing to pay more.
-				 * 					By decreasing 'b' we lower the cost meaning the battery will not be willing to pay more.		
-				 *	var: DEFAULTPRICE -	This is the set price at which we would want to start loading the battery.
-				 *						CurrentPrice - DEFAULTPRICE = stable load of the battery (load it will idle at).
-				 *	var: load -			This is the load of the current battery.
-				 *						Multiplying load increase the time before discharge (unknown reason)
-				 *  var: loader -		This is a counter which counts how long the battery has been loading.
-				 *  var: LOADMULTIPLIER-=====================================================================
-				 *	var: idler -		This is a counter which counts how long the battery had been idle.
-				 *  var: IDLEMULTIPLIER-This is a multiplier which is used to drive cost per demand when the battery has been idle.
-				 *  					By increasing the multiplier the battery will be more likely to charge instead of being idle.
-				 *  					For this battery the multiplier had a direct correlation to how much will be charged after being idle.
-				 *						
+				/*
+				 * What the CostFunction will look like:
+				 * 
+				 * 0% CHARGE:			50% CHARGE:			100% Charge:
+				 *          x         	x        |         	         |         
+				 *          |  x      	   x     |         	         |         
+				 *          |     x   	      x  |         	         |         
+				 *          |        x	         x         	x        |         
+				 *          |         	         |  x      	   x     |         
+				 *          |         	         |     x   	      x  |         
+				 * _________|_________	_________|________x	_________x________			
 				 */
-				cost = (int) (-slope*demand+DEFAULTPRICE-(charge)+(loader*LOADMULTIPLIER)+(idler*IDLEMULTIPLIER));
-				//These are checks to ensure that the cost per demand does not go below or above MIN_COST or MAX_COST respectively.
-				//System.out.println("Adding: Demand: "+demand+", Cost: "+cost);
-				newFunction.put(demand, cost);
 				
+				int cost = (int)(((double)CostFunction.MAX_COST * 1.5) - ((double)(demand+maxCharge)/(double)(2*maxCharge))*(double)CostFunction.MAX_COST - ((double)charge/(double)maxCharge)*((double)CostFunction.MAX_COST/2.0));
+				newFunction.put(demand, cost);
 			}
 		}
-
-		//setCostFunction(new CostFunction(mapTo(newFunction)));
-		setCostFunction(new CostFunction(mapToV2(newFunction)));
-		//System.out.println("Load: "+charge);
-		//System.out.println("Battery: "+getCostFunction());
+		setCostFunction(new CostFunction(removeInvalidCosts(newFunction)));
 	}
 	
-	private SortedMap<Integer, Integer> mapToV2(SortedMap<Integer, Integer> function){
+	/**
+	 * Returns a new map representing a CostFunction based on a given map. Deletes any demand
+	 * that has a price lower than CostFunction.MIN_COST or higher than CostFunction.MAX_COST
+	 * @param function	The function to clean up
+	 * @return	The new function
+	 */
+	private SortedMap<Integer, Integer> removeInvalidCosts(SortedMap<Integer, Integer> function){
 		SortedMap<Integer, Integer> newMap = new TreeMap<Integer, Integer>();
-		Iterator it = function.keySet().iterator();
-		boolean below = false;
-		int previous = 0;
-		while(it.hasNext() & !below){
-			int demand = (int) it.next();
-			int cost = function.get(demand);
-			//System.out.println("From - Demand: "+demand+" Cost: "+cost);
-			if (cost >= CostFunction.MAX_COST && function.get(previous) >= CostFunction.MAX_COST){
-				newMap.remove(previous);
-				newMap.put(demand, CostFunction.MAX_COST);
-			} else if(cost >= CostFunction.MAX_COST){
-				newMap.put(demand, CostFunction.MAX_COST);
-			} else if(cost <= CostFunction.MIN_COST & !below){
-				newMap.put(demand, CostFunction.MIN_COST);
-				below = true;
-			} else if(!below){
-				newMap.put(demand,cost);
-			}
-			previous = demand;
-		}
-		return newMap;
-	}
-	
-	private SortedMap<Integer, Integer> mapTo(SortedMap<Integer, Integer> function){
-		SortedMap<Integer, Integer> newMap = new TreeMap<Integer, Integer>();
-		int lowest = function.get(function.lastKey());
-		for (int demand : function.keySet()){
-			newMap.put(demand, function.get(demand) - lowest);
-		}
-		double fraction = (double)(CostFunction.MAX_COST) / (double)newMap.get(newMap.firstKey());
-		for (int demand : function.keySet()){
-			newMap.put(demand, (int)Math.round((double)newMap.get(demand) * fraction));
+		for(int demand : function.keySet()){
+			if (function.get(demand) >= CostFunction.MIN_COST 
+					&& function.get(demand) <= CostFunction.MAX_COST)
+				newMap.put(demand, function.get(demand));
 		}
 		return newMap;
 	}
@@ -144,21 +87,13 @@ public class Battery extends Appliance{
 	@Override
 	public void updateState() {
 		int t;
-		try{
-			t = Controller.getInstance().getIntervalDuration();
-		}catch(NullPointerException e){
-			t = 60;
-		}
-		
+		t = Controller.getInstance().getIntervalDuration();
+
 		int usage = getCurrentUsage();
-		idler = usage == 0?idler+1:0;
-		loader = usage > 0 && loader < 1?loader+1:0;
 		charge += (int) Math.round(((double)usage/60.0)*(double)t);
 		setState(usage);
 		
 		this.updateCostFunction();
-		//slope = slope==1?0.2:slope;
-		
 	}
 
 	private void setState(int usage){
@@ -169,10 +104,7 @@ public class Battery extends Appliance{
 	
 	@Override
 	public int getCurrentUsage() {
-		//System.out.println(getCostFunction());
-		int demand = getCostFunction().getDemandByCost(currentPrice);
-		//System.out.println("Price: "+currentPrice+" Demand: "+demand);
-		return demand;
+		return getCostFunction().getDemandByCost(currentPrice);
 	}
 
 }
