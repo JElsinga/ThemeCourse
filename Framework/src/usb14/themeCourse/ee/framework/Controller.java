@@ -60,14 +60,14 @@ public class Controller extends Thread{
 		int price = 500;
 		
 		while(this.time < 1440) {
-			int demandGoal = 200;
+			int demandGoal = 100;
 			
 			price = controllable.getCostFunction().getCostByDemand(demandGoal);
 			while(price == 0){
 				demandGoal += 50;
 				price = controllable.getCostFunction().getCostByDemand(demandGoal);
 			}
-			
+			System.out.println(time + ": " + controllable.getCostFunction().toString());
 			controllable.updatePrice(price);
 			difference += Math.abs(controllable.getCurrentUsage() - demandGoal);
 			

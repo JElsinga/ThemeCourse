@@ -132,8 +132,18 @@ public class CostFunction {
 		values.addAll(cf.costByDemandMap.values());
 				
 		// add to result
-		for(int highestCost: values){
-			result.put(this.getDemandByCost(highestCost) + cf.getDemandByCost(highestCost), highestCost);
+		for(int cost: values){
+			if (cost < MAX_COST && !values.contains(cost + 1)){
+				if (this.getDemandByCost(cost) != this.getDemandByCost(cost + 1)
+						|| cf.getDemandByCost(cost) != cf.getDemandByCost(cost + 1))
+					result.put(this.getDemandByCost(cost + 1) + cf.getDemandByCost(cost + 1), cost + 1);
+			}
+			if (cost > MIN_COST && !values.contains(cost - 1)){
+				if (this.getDemandByCost(cost) != this.getDemandByCost(cost - 1)
+						|| cf.getDemandByCost(cost) != cf.getDemandByCost(cost - 1))
+					result.put(this.getDemandByCost(cost - 1) + cf.getDemandByCost(cost - 1), cost - 1);
+			}
+			result.put(this.getDemandByCost(cost) + cf.getDemandByCost(cost), cost);
 		}
 		
 		return new CostFunction(result);
